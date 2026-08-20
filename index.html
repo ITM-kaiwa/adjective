@@ -76,6 +76,26 @@
         .lesson-tag.new-word {
             background-color: #FF9800;
         }
+        .speaker-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #f0f0f0;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            height: 45px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .speaker-btn:hover {
+            background-color: #e0e0e0;
+        }
         .word-kana {
             font-size: 48px;
             font-weight: bold;
@@ -111,14 +131,14 @@
             font-size: 20px;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s;
         }
         .nav-btn:hover {
-            background-color: #1976D2;
+            background-color: #1565C0;
         }
         .nav-btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            transform: none !important;
         }
         .progress {
             font-size: 18px;
@@ -134,10 +154,17 @@
             border-radius: 8px;
             cursor: pointer;
             margin-top: 10px;
-            transition: background 0.3s;
         }
         .mode-switch-btn:hover {
             background-color: #7B1FA2;
+        }
+
+        /* Button Animations */
+        .nav-btn, .mode-switch-btn, .quit-btn, .choice-btn, .speaker-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-btn:active, .mode-switch-btn:active, .quit-btn:active, .choice-btn:active, .speaker-btn:active {
+            transform: scale(0.92);
         }
 
         /* Quiz Mode Styles */
@@ -156,6 +183,7 @@
             align-items: center;
             margin: 20px 0;
             border: 2px solid #e0e0e0;
+            position: relative;
         }
         .small-card .word-kana {
             font-size: 36px;
@@ -188,7 +216,7 @@
             cursor: pointer;
         }
         .quit-btn:hover {
-            background-color: #d32f2f;
+            background-color: #c62828;
         }
         .choices-container {
             display: flex;
@@ -203,20 +231,24 @@
             font-size: 20px;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s;
             font-weight: bold;
         }
         .choice-btn:hover {
             background-color: #e3f2fd;
         }
         .choice-btn.correct {
-            background-color: #e8f5e9; color: #333; border-color: #81c784;
+            background-color: #e8f5e9;
+            color: #333;
+            border-color: #81c784;
         }
         .choice-btn.wrong {
-            background-color: #ffebee; color: #333; border-color: #e57373;
+            background-color: #ffebee;
+            color: #333;
+            border-color: #e57373;
         }
         .choice-btn:disabled {
             cursor: not-allowed;
+            transform: none !important;
         }
         #quiz-feedback {
             margin-top: 15px;
@@ -238,12 +270,14 @@
             <div class="flashcard" id="flashcard">
                 <div class="card-face card-front">
                     <div class="lesson-tag" id="front-lesson"></div>
+                    <button class="speaker-btn" id="front-speaker">🔊</button>
                     <div class="word-kana" id="front-kana"></div>
                     <div class="word-kanji" id="front-kanji"></div>
                     <div class="word-vn" id="front-vn"></div>
                 </div>
                 <div class="card-face card-back">
                     <div class="lesson-tag" id="back-lesson"></div>
+                    <button class="speaker-btn" id="back-speaker">🔊</button>
                     <div id="back-content">
                         <div class="word-kana" id="back-kana"></div>
                         <div class="word-kanji" id="back-kanji"></div>
@@ -262,6 +296,7 @@
     <!-- QUIZ MODE -->
     <div id="quiz-mode">
         <div class="small-card">
+            <button class="speaker-btn" id="quiz-speaker" style="top: 10px; right: 10px; width: 40px; height: 40px; font-size: 20px;">🔊</button>
             <div class="word-kana" id="quiz-kana"></div>
             <div class="word-kanji" id="quiz-kanji"></div>
             <div class="word-vn" id="quiz-vn"></div>
@@ -292,6 +327,19 @@
     let quizChoices = [];
     let hasAnswered = false;
 
+    // --- TTS LOGIC ---
+    function speakText(text, event) {
+        if (event) event.stopPropagation();
+        if (!('speechSynthesis' in window)) return;
+        
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    }
+
     // --- FLASHCARD MODE LOGIC ---
     function renderCard() {
         const card = flashcards[currentIndex];
@@ -301,14 +349,22 @@
         document.getElementById('front-kanji').textContent = card.front.kanji || '';
         document.getElementById('front-vn').textContent = card.front.vn;
         
+        // Speaker Front
+        document.getElementById('front-speaker').onclick = (e) => speakText(card.front.kana, e);
+        
         const backContent = document.getElementById('back-content');
         const backLesson = document.getElementById('back-lesson');
+        const backSpeaker = document.getElementById('back-speaker');
         
         if (!card.back) {
             backLesson.style.display = 'none';
+            backSpeaker.style.display = 'none';
             backContent.innerHTML = '<div class="no-antonym">Không có từ trái nghĩa<br>(対義語無し)</div>';
         } else {
             backLesson.style.display = 'block';
+            backSpeaker.style.display = 'flex';
+            backSpeaker.onclick = (e) => speakText(card.back.kana, e);
+            
             if (card.back.is_new) {
                 backLesson.textContent = 'Chưa học (未習語)';
                 backLesson.className = 'lesson-tag new-word';
@@ -351,14 +407,10 @@
 
     // --- QUIZ MODE LOGIC ---
     function startQuiz() {
-        // Filter cards that have an antonym
         quizCards = flashcards.filter(c => c.back !== null);
-        
-        // Shuffle the quiz cards if desired, but here we just start from 0 for predictability or shuffle them
-        // Let's shuffle quiz cards so it's a real quiz
         quizCards = quizCards.sort(() => Math.random() - 0.5);
         
-        if (quizCards.length === 0) return; // Edge case
+        if (quizCards.length === 0) return; 
         
         currentQuizIndex = 0;
         document.getElementById('flashcard-mode').style.display = 'none';
@@ -370,15 +422,11 @@
     function quitQuiz() {
         document.getElementById('quiz-mode').style.display = 'none';
         document.getElementById('flashcard-mode').style.display = 'block';
-        // Re-render flashcard mode to ensure it's in a clean state
         renderCard();
     }
 
     function getDistractors(correctBack, count) {
-        // Get all unique back cards that are NOT the correct one
         const allBacks = flashcards.filter(c => c.back !== null && c.back.kana !== correctBack.kana).map(c => c.back);
-        
-        // Remove duplicates based on kana
         const uniqueBacks = [];
         const seen = new Set();
         for (let b of allBacks) {
@@ -387,8 +435,6 @@
                 uniqueBacks.push(b);
             }
         }
-        
-        // Shuffle and pick
         const shuffled = uniqueBacks.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, count);
     }
@@ -397,19 +443,18 @@
         hasAnswered = false;
         const card = quizCards[currentQuizIndex];
         
-        // Render small headword card
         document.getElementById('quiz-kana').textContent = card.front.kana;
         document.getElementById('quiz-kanji').textContent = card.front.kanji || '';
         document.getElementById('quiz-vn').textContent = card.front.vn;
         
-        // Prepare choices
+        document.getElementById('quiz-speaker').onclick = (e) => speakText(card.front.kana, e);
+        
         const correctChoice = card.back;
         const distractors = getDistractors(correctChoice, 2);
         
         quizChoices = [correctChoice, ...distractors];
-        quizChoices.sort(() => Math.random() - 0.5); // Shuffle choices
+        quizChoices.sort(() => Math.random() - 0.5); 
         
-        // Render choices
         const container = document.getElementById('choices-container');
         container.innerHTML = '';
         
@@ -417,7 +462,6 @@
             const btn = document.createElement('button');
             btn.className = 'choice-btn';
             
-            // Display Kana and optionally Kanji
             let text = choice.kana;
             if (choice.kanji) text += ` (${choice.kanji})`;
             
@@ -429,7 +473,6 @@
         document.getElementById('quiz-feedback').textContent = '';
         document.getElementById('quiz-feedback').style.color = '#333';
         
-        // Update navigation
         document.getElementById('quiz-btn-prev').disabled = currentQuizIndex === 0;
         document.getElementById('quiz-btn-next').disabled = currentQuizIndex === quizCards.length - 1;
         document.getElementById('quiz-current-idx').textContent = currentQuizIndex + 1;
@@ -444,9 +487,8 @@
         const card = quizCards[currentQuizIndex];
         
         for (let i = 0; i < buttons.length; i++) {
-            buttons[i].disabled = true; // Disable all
+            buttons[i].disabled = true; 
             
-            // Highlight the correct one regardless of choice
             if (quizChoices[i].kana === card.back.kana) {
                 buttons[i].classList.add('correct');
             }
@@ -477,7 +519,6 @@
         }
     }
 
-    // Initialize flashcard mode
     renderCard();
 </script>
 </body>
