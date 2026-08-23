@@ -74,7 +74,7 @@
         .flashcard-container {
             perspective: 1000px;
             margin: 20px 0;
-            height: 380px;
+            height: 440px;
             cursor: pointer;
         }
         .flashcard {
@@ -164,6 +164,9 @@
             width: 90%;
             text-align: left;
             line-height: 1.8;
+            max-height: 180px;
+            overflow-y: auto;
+            box-sizing: border-box;
         }
         rt {
             font-size: 12px;
@@ -190,6 +193,137 @@
         .nav-btn:active { transform: scale(0.92); }
         .nav-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none !important; }
         .progress { font-size: 18px; color: #555; font-weight: bold; }
+
+        .example-vn {
+            margin-top: 8px;
+            font-size: 15px;
+            color: #1976D2;
+            font-style: italic;
+        }
+
+        /* --- Admin / Settings Panel --- */
+        .settings-btn {
+            position: absolute;
+            right: 0;
+            background: none;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .settings-btn:hover { transform: rotate(30deg); }
+        .settings-btn:active { transform: scale(0.9) rotate(30deg); }
+
+        .admin-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .admin-overlay.show { display: flex; }
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .admin-header h3 { margin: 0; font-size: 18px; }
+        .admin-close-btn {
+            background: none; border: none; font-size: 24px; cursor: pointer; color: #888;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .admin-close-btn:hover { color: #333; }
+        .admin-close-btn:active { transform: scale(0.9); }
+        .admin-body {
+            padding: 16px 20px;
+            overflow-y: auto;
+        }
+        .admin-search {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+        .admin-toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            background: #f5f5f5;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+        .admin-toggle-row span { font-size: 14px; }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 26px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #4CAF50; }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .admin-count {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .admin-table th, .admin-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .admin-table th {
+            background: #f9f9f9;
+            position: sticky;
+            top: 0;
+        }
+        .admin-table tr:hover { background: #f5faff; }
     </style>
 </head>
 <body>
@@ -204,6 +338,7 @@
             </div>
         </div>
         <h2>Động từ (Tự / Tha)</h2>
+        <button class="settings-btn" onclick="openAdmin(event)" title="Quản lý dữ liệu">⚙️</button>
     </div>
     
     <div class="flashcard-container" onclick="flipCard()">
@@ -233,9 +368,95 @@
     </div>
 </div>
 
+<!-- ADMIN / SETTINGS PANEL -->
+<div class="admin-overlay" id="admin-overlay" onclick="closeAdminOnOverlay(event)">
+    <div class="admin-panel" onclick="event.stopPropagation()">
+        <div class="admin-header">
+            <h3>📋 Quản lý dữ liệu (管理画面)</h3>
+            <button class="admin-close-btn" onclick="closeAdmin()">✕</button>
+        </div>
+        <div class="admin-body">
+            <div class="admin-toggle-row">
+                <span>Hiển thị bản dịch tiếng Việt của câu ví dụ<br>（例文のベトナム語訳を表示）</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-example-vn" onchange="onToggleExampleVN(this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <input type="text" class="admin-search" id="admin-search" placeholder="Tìm kiếm (kanji, nghĩa, ví dụ...)" oninput="renderAdminTable()">
+            <div class="admin-count" id="admin-count"></div>
+            <div style="overflow-x:auto;">
+                <table class="admin-table" id="admin-table">
+                    <thead id="admin-thead"></thead>
+                    <tbody id="admin-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    const flashcards = [{"vt": {"kanji": "開ける", "html": "<ruby>開<rt>あ</rt></ruby>ける", "meaning": "mở (cái gì đó)", "example_text": "ドアを開ける。", "example_html": "ドアを<ruby>開<rt>あ</rt></ruby>ける。"}, "vi": {"kanji": "開く", "html": "<ruby>開<rt>あ</rt></ruby>く", "meaning": "(cái gì đó) mở, tự mở", "example_text": "ドアが開く。", "example_html": "ドアが<ruby>開<rt>あ</rt></ruby>く。"}}, {"vt": {"kanji": "閉める", "html": "<ruby>閉<rt>し</rt></ruby>める", "meaning": "đóng (cái gì đó)", "example_text": "ドアを閉める。", "example_html": "ドアを<ruby>閉<rt>し</rt></ruby>める。"}, "vi": {"kanji": "閉まる", "html": "<ruby>閉<rt>し</rt></ruby>まる", "meaning": "(cái gì đó) đóng", "example_text": "ドアが閉まる。", "example_html": "ドアが<ruby>閉<rt>し</rt></ruby>まる。"}}, {"vt": {"kanji": "入れる", "html": "<ruby>入<rt>い</rt></ruby>れる", "meaning": "cho vào, bỏ vào", "example_text": "犬を家の中に入れた。", "example_html": "<ruby>犬<rt>いぬ</rt></ruby>を<ruby>家<rt>いえ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>に<ruby>入<rt>い</rt></ruby>れた。"}, "vi": {"kanji": "入る", "html": "<ruby>入<rt>はい</rt></ruby>る", "meaning": "vào, đi vào", "example_text": "虫が中に入った。", "example_html": "<ruby>虫<rt>むし</rt></ruby>が<ruby>中<rt>なか</rt></ruby>に<ruby>入<rt>はい</rt></ruby>った。"}}, {"vt": {"kanji": "出す", "html": "<ruby>出<rt>だ</rt></ruby>す", "meaning": "lấy ra, đưa ra", "example_text": "カバンから財布を出す。", "example_html": "カバンから<ruby>財布<rt>さいふ</rt></ruby>を<ruby>出<rt>だ</rt></ruby>す。"}, "vi": {"kanji": "出る", "html": "<ruby>出<rt>で</rt></ruby>る", "meaning": "ra, đi ra khỏi", "example_text": "店から出る。", "example_html": "<ruby>店<rt>みせ</rt></ruby>から<ruby>出<rt>で</rt></ruby>る。"}}, {"vt": {"kanji": "つける", "html": "<ruby>つける</ruby>", "meaning": "bật (điện, đèn)", "example_text": "電気をつける。", "example_html": "<ruby>電気<rt>でんき</rt></ruby>をつける。"}, "vi": {"kanji": "つく", "html": "つく", "meaning": "(điện, đèn) sáng, bật", "example_text": "電気がつく。", "example_html": "<ruby>電気<rt>でんき</rt></ruby>がつく。"}}, {"vt": {"kanji": "消す", "html": "<ruby>消<rt>け</rt></ruby>す", "meaning": "tắt, dập tắt", "example_text": "火を消す。", "example_html": "<ruby>火<rt>ひ</rt></ruby>を<ruby>消<rt>け</rt></ruby>す。"}, "vi": {"kanji": "消える", "html": "<ruby>消<rt>き</rt></ruby>える", "meaning": "tắt, biến mất", "example_text": "火が消える。", "example_html": "<ruby>火<rt>ひ</rt></ruby>が<ruby>消<rt>き</rt></ruby>える。"}}, {"vt": {"kanji": "落とす", "html": "<ruby>落<rt>お</rt></ruby>とす", "meaning": "làm rơi, đánh rơi", "example_text": "スマホを落とす。", "example_html": "スマホを<ruby>落<rt>お</rt></ruby>とす。"}, "vi": {"kanji": "落ちる", "html": "<ruby>落<rt>お</rt></ruby>ちる", "meaning": "rơi, rớt", "example_text": "スマホが落ちる。", "example_html": "スマホが<ruby>落<rt>お</rt></ruby>ちる。"}}, {"vt": {"kanji": "壊す", "html": "<ruby>壊<rt>こわ</rt></ruby>す", "meaning": "làm hỏng, phá hỏng", "example_text": "時計を壊した。", "example_html": "<ruby>時計<rt>とけい</rt></ruby>を<ruby>壊<rt>こわ</rt></ruby>した。"}, "vi": {"kanji": "壊れる", "html": "<ruby>壊<rt>こわ</rt></ruby>れる", "meaning": "bị hỏng, bị vỡ", "example_text": "時計が壊れた。", "example_html": "<ruby>時計<rt>とけい</rt></ruby>が<ruby>壊<rt>こわ</rt></ruby>れた。"}}, {"vt": {"kanji": "汚す", "html": "<ruby>汚<rt>よご</rt></ruby>す", "meaning": "làm bẩn", "example_text": "服を汚す。", "example_html": "<ruby>服<rt>ふく</rt></ruby>を<ruby>汚<rt>よご</rt></ruby>す。"}, "vi": {"kanji": "汚れる", "html": "<ruby>汚<rt>よご</rt></ruby>れる", "meaning": "bị bẩn", "example_text": "服が汚れる。", "example_html": "<ruby>服<rt>ふく</rt></ruby>が<ruby>汚<rt>よご</rt></ruby>れる。"}}, {"vt": {"kanji": "沸かす", "html": "<ruby>沸<rt>わ</rt></ruby>かす", "meaning": "đun sôi, nấu sôi", "example_text": "お湯を沸かす。", "example_html": "お<ruby>湯<rt>ゆ</rt></ruby>を<ruby>沸<rt>わ</rt></ruby>かす。"}, "vi": {"kanji": "沸く", "html": "<ruby>沸<rt>わ</rt></ruby>く", "meaning": "sôi", "example_text": "お湯が沸く。", "example_html": "お<ruby>湯<rt>ゆ</rt></ruby>が<ruby>沸<rt>わ</rt></ruby>く。"}}, {"vt": {"kanji": "始める", "html": "<ruby>始<rt>はじ</rt></ruby>める", "meaning": "bắt đầu (cái gì)", "example_text": "授業を始める。", "example_html": "<ruby>授業<rt>じゅぎょう</rt></ruby>を<ruby>始<rt>はじ</rt></ruby>める。"}, "vi": {"kanji": "始まる", "html": "<ruby>始<rt>はじ</rt></ruby>まる", "meaning": "bắt đầu", "example_text": "授業が始まる。", "example_html": "<ruby>授業<rt>じゅぎょう</rt></ruby>が<ruby>始<rt>はじ</rt></ruby>まる。"}}, {"vt": {"kanji": "終える", "html": "<ruby>終<rt>お</rt></ruby>える", "meaning": "kết thúc, hoàn thành (cái gì)", "example_text": "宿題を終える。", "example_html": "<ruby>宿題<rt>しゅくだい</rt></ruby>を<ruby>終<rt>お</rt></ruby>える。"}, "vi": {"kanji": "終わる", "html": "<ruby>終<rt>お</rt></ruby>わる", "meaning": "kết thúc, xong", "example_text": "宿題が終わる。", "example_html": "<ruby>宿題<rt>しゅくだい</rt></ruby>が<ruby>終<rt>お</rt></ruby>わる。"}}, {"vt": {"kanji": "続ける", "html": "<ruby>続<rt>つづ</rt></ruby>ける", "meaning": "tiếp tục (cái gì)", "example_text": "話を続ける。", "example_html": "<ruby>話<rt>はなし</rt></ruby>を<ruby>続<rt>つづ</rt></ruby>ける。"}, "vi": {"kanji": "続く", "html": "<ruby>続<rt>つづ</rt></ruby>く", "meaning": "tiếp diễn, kéo dài", "example_text": "話が続く。", "example_html": "<ruby>話<rt>はなし</rt></ruby>が<ruby>続<rt>つづ</rt></ruby>く。"}}, {"vt": {"kanji": "決める", "html": "<ruby>決<rt>き</rt></ruby>める", "meaning": "quyết định (cái gì)", "example_text": "日程を決める。", "example_html": "<ruby>日程<rt>にってい</rt></ruby>を<ruby>決<rt>き</rt></ruby>める。"}, "vi": {"kanji": "決まる", "html": "<ruby>決<rt>き</rt></ruby>まる", "meaning": "được quyết định", "example_text": "日程が決まる。", "example_html": "<ruby>日程<rt>にってい</rt></ruby>が<ruby>決<rt>き</rt></ruby>まる。"}}, {"vt": {"kanji": "起こす", "html": "<ruby>起<rt>お</rt></ruby>こす", "meaning": "đánh thức", "example_text": "息子を起こした。", "example_html": "<ruby>息子<rt>むすこ</rt></ruby>を<ruby>起<rt>お</rt></ruby>こした。"}, "vi": {"kanji": "起きる", "html": "<ruby>起<rt>お</rt></ruby>きる", "meaning": "thức dậy", "example_text": "息子が起きた。", "example_html": "<ruby>息子<rt>むすこ</rt></ruby>が<ruby>起<rt>お</rt></ruby>きた。"}}, {"vt": {"kanji": "集める", "html": "<ruby>集<rt>あつ</rt></ruby>める", "meaning": "thu thập, tập hợp (cái gì/ai)", "example_text": "人を集める。", "example_html": "<ruby>人<rt>ひと</rt></ruby>を<ruby>集<rt>あつ</rt></ruby>める。"}, "vi": {"kanji": "集まる", "html": "<ruby>集<rt>あつ</rt></ruby>まる", "meaning": "tập trung lại, tụ tập", "example_text": "人が集まる。", "example_html": "<ruby>人<rt>ひと</rt></ruby>が<ruby>集<rt>あつ</rt></ruby>まる。"}}, {"vt": {"kanji": "変える", "html": "<ruby>変<rt>か</rt></ruby>える", "meaning": "thay đổi, đổi (cái gì)", "example_text": "色を変える。", "example_html": "<ruby>色<rt>いろ</rt></ruby>を<ruby>変<rt>か</rt></ruby>える。"}, "vi": {"kanji": "変わる", "html": "<ruby>変<rt>か</rt></ruby>わる", "meaning": "thay đổi, biến đổi", "example_text": "色が変わる。", "example_html": "<ruby>色<rt>いろ</rt></ruby>が<ruby>変<rt>か</rt></ruby>わる。"}}, {"vt": {"kanji": "治す", "html": "<ruby>治<rt>なお</rt></ruby>す", "meaning": "chữa trị, chữa lành", "example_text": "怪我を治す。", "example_html": "<ruby>怪我<rt>けが</rt></ruby>を<ruby>治<rt>なお</rt></ruby>す。"}, "vi": {"kanji": "治る", "html": "<ruby>治<rt>なお</rt></ruby>る", "meaning": "khỏi (bệnh), lành (vết thương)", "example_text": "怪我が治る。", "example_html": "<ruby>怪我<rt>けが</rt></ruby>が<ruby>治<rt>なお</rt></ruby>る。"}}, {"vt": {"kanji": "残す", "html": "<ruby>残<rt>のこ</rt></ruby>す", "meaning": "để lại, chừa lại", "example_text": "ご飯を残した。", "example_html": "ご<ruby>飯<rt>はん</rt></ruby>を<ruby>残<rt>のこ</rt></ruby>した。"}, "vi": {"kanji": "残る", "html": "<ruby>残<rt>のこ</rt></ruby>る", "meaning": "còn lại, sót lại", "example_text": "ご飯が残った。", "example_html": "ご<ruby>飯<rt>はん</rt></ruby>が<ruby>残<rt>のこ</rt></ruby>った。"}}, {"vt": {"kanji": "冷やす", "html": "<ruby>冷<rt>ひ</rt></ruby>やす", "meaning": "làm lạnh, ướp lạnh", "example_text": "今からビールを冷やします。", "example_html": "<ruby>今<rt>いま</rt></ruby>からビールを<ruby>冷<rt>ひ</rt></ruby>やします。"}, "vi": {"kanji": "冷える", "html": "<ruby>冷<rt>ひ</rt></ruby>える", "meaning": "trở nên lạnh, nguội đi", "example_text": "もうビールが冷えていますよ。", "example_html": "もうビールが<ruby>冷<rt>ひ</rt></ruby>えていますよ。"}}, {"vt": {"kanji": "戻す", "html": "<ruby>戻<rt>もど</rt></ruby>す", "meaning": "trả về, để lại chỗ cũ", "example_text": "元の場所に戻す。", "example_html": "<ruby>元<rt>もと</rt></ruby>の<ruby>場所<rt>ばしょ</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>す。"}, "vi": {"kanji": "戻る", "html": "<ruby>戻<rt>もど</rt></ruby>る", "meaning": "quay lại, trở về", "example_text": "家に戻る。", "example_html": "<ruby>家<rt>いえ</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>る。"}}, {"vt": {"kanji": "燃やす", "html": "<ruby>燃<rt>も</rt></ruby>やす", "meaning": "đốt, thiêu đốt", "example_text": "木を燃やす。", "example_html": "<ruby>木<rt>き</rt></ruby>を<ruby>燃<rt>も</rt></ruby>やす。"}, "vi": {"kanji": "燃える", "html": "<ruby>燃<rt>も</rt></ruby>える", "meaning": "cháy, bốc cháy", "example_text": "木が燃える。", "example_html": "<ruby>木<rt>き</rt></ruby>が<ruby>燃<rt>も</rt></ruby>える。"}}, {"vt": {"kanji": "倒す", "html": "<ruby>倒<rt>たお</rt></ruby>す", "meaning": "xô ngã, đánh bại, làm đổ", "example_text": "敵を倒した。", "example_html": "<ruby>敵<rt>てき</rt></ruby>を<ruby>倒<rt>たお</rt></ruby>した。"}, "vi": {"kanji": "倒れる", "html": "<ruby>倒<rt>たお</rt></ruby>れる", "meaning": "ngã, đổ, xỉu", "example_text": "敵が倒れた。", "example_html": "<ruby>敵<rt>てき</rt></ruby>が<ruby>倒<rt>たお</rt></ruby>れた。"}}, {"vt": {"kanji": "見つける", "html": "<ruby>見<rt>み</rt></ruby>つける", "meaning": "tìm thấy, tìm ra", "example_text": "財布を見つけた。", "example_html": "<ruby>財布<rt>さいふ</rt></ruby>を<ruby>見<rt>み</rt></ruby>つけた。"}, "vi": {"kanji": "見つかる", "html": "<ruby>見<rt>み</rt></ruby>つかる", "meaning": "được tìm thấy, tìm ra", "example_text": "財布が見つかった。", "example_html": "<ruby>財布<rt>さいふ</rt></ruby>が<ruby>見<rt>み</rt></ruby>つかった。"}}, {"vt": {"kanji": "乾かす", "html": "<ruby>乾<rt>かわ</rt></ruby>かす", "meaning": "sấy khô, phơi khô", "example_text": "髪を乾かした。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>を<ruby>乾<rt>かわ</rt></ruby>かした。"}, "vi": {"kanji": "乾く", "html": "<ruby>乾<rt>かわ</rt></ruby>く", "meaning": "khô, ráo", "example_text": "髪が乾いた。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>が<ruby>乾<rt>かわ</rt></ruby>いた。"}}, {"vt": {"kanji": "切る", "html": "<ruby>切<rt>き</rt></ruby>る", "meaning": "cắt (cái gì)", "example_text": "紙を切った。", "example_html": "<ruby>紙<rt>かみ</rt></ruby>を<ruby>切<rt>き</rt></ruby>った。"}, "vi": {"kanji": "切れる", "html": "<ruby>切<rt>き</rt></ruby>れる", "meaning": "bị đứt, rách", "example_text": "カバンの紐が切れた。", "example_html": "カバンの<ruby>紐<rt>ひも</rt></ruby>が<ruby>切<rt>き</rt></ruby>れた。"}}, {"vt": {"kanji": "助ける", "html": "<ruby>助<rt>たす</rt></ruby>ける", "meaning": "cứu giúp, giúp đỡ", "example_text": "溺れている人を助けた。", "example_html": "溺れている<ruby>人<rt>ひと</rt></ruby>を<ruby>助<rt>たす</rt></ruby>けた。"}, "vi": {"kanji": "助かる", "html": "<ruby>助<rt>たす</rt></ruby>かる", "meaning": "được cứu, thoát nạn, đỡ quá", "example_text": "おかげで、助かったよ。", "example_html": "おかげで、<ruby>助<rt>たす</rt></ruby>かったよ。"}}, {"vt": {"kanji": "ためる", "html": "ためる", "meaning": "tích lũy, dành dụm", "example_text": "お金をためる。", "example_html": "お<ruby>金<rt>かね</rt></ruby>をためる。"}, "vi": {"kanji": "たまる", "html": "たまる", "meaning": "tích tụ, dồn ứ, đọng lại", "example_text": "お金がたまる。", "example_html": "お<ruby>金<rt>かね</rt></ruby>がたまる。"}}, {"vt": {"kanji": "鳴らす", "html": "<ruby>鳴<rt>な</rt></ruby>らす", "meaning": "làm rung chuông, bấm chuông, thổi còi", "example_text": "鐘を鳴らす。", "example_html": "<ruby>鐘<rt>かね</rt></ruby>を<ruby>鳴<rt>な</rt></ruby>らす。"}, "vi": {"kanji": "鳴る", "html": "<ruby>鳴<rt>な</rt></ruby>る", "meaning": "kêu, reo, vang lên", "example_text": "鐘が鳴る。", "example_html": "<ruby>鐘<rt>かね</rt></ruby>が<ruby>鳴<rt>な</rt></ruby>る。"}}, {"vt": {"kanji": "染める", "html": "<ruby>染<rt>そ</rt></ruby>める", "meaning": "nhuộm (tóc, vải)", "example_text": "髪を染める。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>を<ruby>染<rt>そ</rt></ruby>める。"}, "vi": {"kanji": "染まる", "html": "<ruby>染<rt>そ</rt></ruby>まる", "meaning": "nhuốm màu, đổi màu", "example_text": "赤色に染まる。", "example_html": "<ruby>赤<ruby>色<rt>いろ</rt></ruby><rt>あかいろ</rt></ruby>に<ruby>染<rt>そ</rt></ruby>まる。"}}, {"vt": {"kanji": "溶かす", "html": "<ruby>溶<rt>と</rt></ruby>かす", "meaning": "làm tan chảy, hòa tan", "example_text": "チーズを溶かす。", "example_html": "チーズを<ruby>溶<rt>と</rt></ruby>かす。"}, "vi": {"kanji": "溶ける", "html": "<ruby>溶<rt>と</rt></ruby>ける", "meaning": "tan chảy, hòa tan", "example_text": "アイスが溶ける。", "example_html": "アイスが<ruby>溶<rt>と</rt></ruby>ける。"}}, {"vt": {"kanji": "重ねる", "html": "<ruby>重<rt>かさ</rt></ruby>ねる", "meaning": "chồng lên, xếp chồng lên", "example_text": "本を積み重ねる。", "example_html": "<ruby>本<rt>ほん</rt></ruby>を<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ねる。"}, "vi": {"kanji": "重なる", "html": "<ruby>重<rt>かさ</rt></ruby>なる", "meaning": "chồng chất, trùng lặp", "example_text": "本が積み重なる。", "example_html": "<ruby>本<rt>ほん</rt></ruby>が<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>なる。"}}, {"vt": {"kanji": "潰す", "html": "<ruby>潰<rt>つぶ</rt></ruby>す", "meaning": "nghiền nát, đè bẹp", "example_text": "じゃがいもを潰した。", "example_html": "じゃがいもを<ruby>潰<rt>つぶ</rt></ruby>した。"}, "vi": {"kanji": "潰れる", "html": "<ruby>潰<rt>つぶ</rt></ruby>れる", "meaning": "bị nát, bị bẹp, bị sập", "example_text": "地震で家が潰れた。", "example_html": "<ruby>地震<rt>じしん</rt></ruby>で<ruby>家<rt>いえ</rt></ruby>が<ruby>潰<rt>つぶ</rt></ruby>れた。"}}, {"vt": {"kanji": "曲げる", "html": "<ruby>曲<rt>ま</rt></ruby>げる", "meaning": "uốn cong, bẻ cong", "example_text": "スプーンを曲げる。", "example_html": "スプーンを<ruby>曲<rt>ま</rt></ruby>げる。"}, "vi": {"kanji": "曲がる", "html": "<ruby>曲<rt>ま</rt></ruby>がる", "meaning": "bị cong, rẽ (hướng)", "example_text": "スプーンが曲がる。", "example_html": "スプーンが<ruby>曲<rt>ま</rt></ruby>がる。"}}, {"vt": {"kanji": "捕まえる", "html": "<ruby>捕<rt>つか</rt></ruby>まえる", "meaning": "bắt giữ, tóm lấy", "example_text": "犯人を捕まえる。", "example_html": "<ruby>犯<ruby>人<rt>ひと</rt></ruby><rt>はんにん</rt></ruby>を<ruby>捕<rt>つか</rt></ruby>まえる。"}, "vi": {"kanji": "捕まる", "html": "<ruby>捕<rt>つか</rt></ruby>まる", "meaning": "bị bắt, nắm lấy", "example_text": "犯人が捕まる。", "example_html": "<ruby>犯<ruby>人<rt>ひと</rt></ruby><rt>はんにん</rt></ruby>が<ruby>捕<rt>つか</rt></ruby>まる。"}}, {"vt": {"kanji": "積む", "html": "<ruby>積<rt>つ</rt></ruby>む", "meaning": "chất lên, xếp lên", "example_text": "荷物をトラックに積む。", "example_html": "<ruby>荷物<rt>にもつ</rt></ruby>をトラックに<ruby>積<rt>つ</rt></ruby>む。"}, "vi": {"kanji": "積もる", "html": "<ruby>積<rt>つ</rt></ruby>もる", "meaning": "chất đống, tích tụ (tuyết)", "example_text": "雪が積もる。", "example_html": "<ruby>雪<rt>ゆき</rt></ruby>が<ruby>積<rt>つ</rt></ruby>もる。"}}, {"vt": {"kanji": "並べる", "html": "<ruby>並<rt>なら</rt></ruby>べる", "meaning": "sắp xếp, bày ra", "example_text": "椅子を並べる。", "example_html": "<ruby>椅子<rt>いす</rt></ruby>を<ruby>並<rt>なら</rt></ruby>べる。"}, "vi": {"kanji": "並ぶ", "html": "<ruby>並<rt>なら</rt></ruby>ぶ", "meaning": "xếp hàng, đứng thẳng hàng", "example_text": "列に並ぶ。", "example_html": "<ruby>列<rt>れつ</rt></ruby>に<ruby>並<rt>なら</rt></ruby>ぶ。"}}, {"vt": {"kanji": "こぼす", "html": "<ruby>こぼす</ruby>", "meaning": "làm đổ, làm tràn", "example_text": "ジュースをこぼす。", "example_html": "ジュースをこぼす。"}, "vi": {"kanji": "こぼれる", "html": "こぼれる", "meaning": "bị đổ, bị tràn ra", "example_text": "ジュースがこぼれる。", "example_html": "ジュースがこぼれる。"}}, {"vt": {"kanji": "乱す", "html": "<ruby>乱<rt>みだ</rt></ruby>す", "meaning": "làm rối loạn, làm mất trật tự", "example_text": "髪を乱す。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>を<ruby>乱<rt>みだ</rt></ruby>す。"}, "vi": {"kanji": "乱れる", "html": "<ruby>乱<rt>みだ</rt></ruby>れる", "meaning": "bị rối, xáo trộn, mất trật tự", "example_text": "髪が乱れる。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>が<ruby>乱<rt>みだ</rt></ruby>れる。"}}, {"vt": {"kanji": "届ける", "html": "<ruby>届<rt>とど</rt></ruby>ける", "meaning": "gửi đến, chuyển phát, báo cáo", "example_text": "手紙を届ける。", "example_html": "<ruby><ruby>手<rt>て</rt></ruby><ruby>紙<rt>かみ</rt></ruby><rt>てがみ</rt></ruby>を<ruby>届<rt>とど</rt></ruby>ける。"}, "vi": {"kanji": "届く", "html": "<ruby>届<rt>とど</rt></ruby>く", "meaning": "được gửi đến, chạm tới", "example_text": "手紙が届く。", "example_html": "<ruby><ruby>手<rt>て</rt></ruby><ruby>紙<rt>かみ</rt></ruby><rt>てがみ</rt></ruby>が<ruby>届<rt>とど</rt></ruby>く。"}}, {"vt": {"kanji": "回す", "html": "<ruby>回<rt>まわ</rt></ruby>す", "meaning": "xoay, quay (vật gì)", "example_text": "地球儀を回す。", "example_html": "<ruby><ruby>地球<rt>ちきゅう</rt></ruby>儀<rt>ちきゅうぎ</rt></ruby>を<ruby>回<rt>まわ</rt></ruby>す。"}, "vi": {"kanji": "回る", "html": "<ruby>回<rt>まわ</rt></ruby>る", "meaning": "quay, xoay quanh", "example_text": "地球が回る。", "example_html": "<ruby>地球<rt>ちきゅう</rt></ruby>が<ruby>回<rt>まわ</rt></ruby>る。"}}, {"vt": {"kanji": "折る", "html": "<ruby>折<rt>お</rt></ruby>る", "meaning": "bẻ gãy, gập lại", "example_text": "骨を折る。", "example_html": "<ruby>骨<rt>ほね</rt></ruby>を<ruby>折<rt>お</rt></ruby>る。"}, "vi": {"kanji": "折れる", "html": "<ruby>折<rt>お</rt></ruby>れる", "meaning": "bị gãy, gập", "example_text": "骨が折れる。", "example_html": "<ruby>骨<rt>ほね</rt></ruby>が<ruby>折<rt>お</rt></ruby>れる。"}}, {"vt": {"kanji": "破る", "html": "<ruby>破<rt>やぶ</rt></ruby>る", "meaning": "xé rách, phá vỡ", "example_text": "紙を破る。", "example_html": "<ruby>紙<rt>かみ</rt></ruby>を<ruby>破<rt>やぶ</rt></ruby>る。"}, "vi": {"kanji": "破れる", "html": "<ruby>破<rt>やぶ</rt></ruby>れる", "meaning": "bị rách, thủng", "example_text": "紙が破れる。", "example_html": "<ruby>紙<rt>かみ</rt></ruby>が<ruby>破<rt>やぶ</rt></ruby>れる。"}}, {"vt": {"kanji": "割る", "html": "<ruby>割<rt>わ</rt></ruby>る", "meaning": "làm vỡ, đập vỡ, chia nhỏ", "example_text": "お皿を割る。", "example_html": "お<ruby>皿<rt>さら</rt></ruby>を<ruby>割<rt>わ</rt></ruby>る。"}, "vi": {"kanji": "割れる", "html": "<ruby>割<rt>わ</rt></ruby>れる", "meaning": "bị vỡ, nứt", "example_text": "お皿が割れる。", "example_html": "お<ruby>皿<rt>さら</rt></ruby>が<ruby>割<rt>わ</rt></ruby>れる。"}}, {"vt": {"kanji": "上げる", "html": "<ruby>上<rt>あ</rt></ruby>げる", "meaning": "nâng lên, giơ lên", "example_text": "手を上げる。", "example_html": "<ruby>手<rt>て</rt></ruby>を<ruby>上<rt>あ</rt></ruby>げる。"}, "vi": {"kanji": "上がる", "html": "<ruby>上<rt>あ</rt></ruby>がる", "meaning": "tăng lên, lên cao", "example_text": "気温が上がる。", "example_html": "<ruby>気温<rt>きおん</rt></ruby>が<ruby>上<rt>あ</rt></ruby>がる。"}}, {"vt": {"kanji": "下げる", "html": "<ruby>下<rt>さ</rt></ruby>げる", "meaning": "hạ xuống, giảm xuống", "example_text": "手を下げる。", "example_html": "<ruby>手<rt>て</rt></ruby>を<ruby>下<rt>さ</rt></ruby>げる。"}, "vi": {"kanji": "下がる", "html": "<ruby>下<rt>さ</rt></ruby>がる", "meaning": "giảm xuống, hạ xuống", "example_text": "気温が下がる。", "example_html": "<ruby>気温<rt>きおん</rt></ruby>が<ruby>下<rt>さ</rt></ruby>がる。"}}];
+    const flashcards = [{"vt": {"kanji": "開ける", "html": "<ruby>開<rt>あ</rt></ruby>ける", "meaning": "mở (cái gì đó)", "example_text": "（私が）ドアを開ける。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）ドアを<ruby>開<rt>あ</rt></ruby>ける。", "example_vn": "(Tôi) mở cửa."}, "vi": {"kanji": "開く", "html": "<ruby>開<rt>あ</rt></ruby>く", "meaning": "(cái gì đó) mở, tự mở", "example_text": "ドアが開く。", "example_html": "ドアが<ruby>開<rt>あ</rt></ruby>く。", "example_vn": "Cửa mở ra."}}, {"vt": {"kanji": "閉める", "html": "<ruby>閉<rt>し</rt></ruby>める", "meaning": "đóng (cái gì đó)", "example_text": "（私が）ドアを閉める。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）ドアを<ruby>閉<rt>し</rt></ruby>める。", "example_vn": "(Tôi) đóng cửa."}, "vi": {"kanji": "閉まる", "html": "<ruby>閉<rt>し</rt></ruby>まる", "meaning": "(cái gì đó) đóng", "example_text": "ドアが閉まる。", "example_html": "ドアが<ruby>閉<rt>し</rt></ruby>まる。", "example_vn": "Cửa đóng lại."}}, {"vt": {"kanji": "入れる", "html": "<ruby>入<rt>い</rt></ruby>れる", "meaning": "cho vào, bỏ vào", "example_text": "（私が）犬を家の中に入れた。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>犬<rt>いぬ</rt></ruby>を<ruby>家<rt>いえ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>に<ruby>入<rt>い</rt></ruby>れた。", "example_vn": "(Tôi) đã cho con chó vào trong nhà."}, "vi": {"kanji": "入る", "html": "<ruby>入<rt>はい</rt></ruby>る", "meaning": "vào, đi vào", "example_text": "虫が中に入った。", "example_html": "<ruby>虫<rt>むし</rt></ruby>が<ruby>中<rt>なか</rt></ruby>に<ruby>入<rt>はい</rt></ruby>った。", "example_vn": "Con côn trùng đã chui vào bên trong."}}, {"vt": {"kanji": "出す", "html": "<ruby>出<rt>だ</rt></ruby>す", "meaning": "lấy ra, đưa ra", "example_text": "（私が）カバンから財布を出す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）カバンから<ruby>財布<rt>さいふ</rt></ruby>を<ruby>出<rt>だ</rt></ruby>す。", "example_vn": "(Tôi) lấy ví ra khỏi cặp."}, "vi": {"kanji": "出る", "html": "<ruby>出<rt>で</rt></ruby>る", "meaning": "ra, đi ra khỏi", "example_text": "店から出る。", "example_html": "<ruby>店<rt>みせ</rt></ruby>から<ruby>出<rt>で</rt></ruby>る。", "example_vn": "Rời khỏi cửa hàng."}}, {"vt": {"kanji": "つける", "html": "<ruby>つける</ruby>", "meaning": "bật (điện, đèn)", "example_text": "（私が）電気をつける。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>電気<rt>でんき</rt></ruby>をつける。", "example_vn": "(Tôi) bật đèn."}, "vi": {"kanji": "つく", "html": "つく", "meaning": "(điện, đèn) sáng, bật", "example_text": "電気がつく。", "example_html": "<ruby>電気<rt>でんき</rt></ruby>がつく。", "example_vn": "Đèn bật sáng."}}, {"vt": {"kanji": "消す", "html": "<ruby>消<rt>け</rt></ruby>す", "meaning": "tắt, dập tắt", "example_text": "（私が）火を消す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>火<rt>ひ</rt></ruby>を<ruby>消<rt>け</rt></ruby>す。", "example_vn": "(Tôi) tắt lửa."}, "vi": {"kanji": "消える", "html": "<ruby>消<rt>き</rt></ruby>える", "meaning": "tắt, biến mất", "example_text": "火が消える。", "example_html": "<ruby>火<rt>ひ</rt></ruby>が<ruby>消<rt>き</rt></ruby>える。", "example_vn": "Lửa tắt."}}, {"vt": {"kanji": "落とす", "html": "<ruby>落<rt>お</rt></ruby>とす", "meaning": "làm rơi, đánh rơi", "example_text": "（私が）スマホを落とす。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）スマホを<ruby>落<rt>お</rt></ruby>とす。", "example_vn": "(Tôi) làm rơi điện thoại."}, "vi": {"kanji": "落ちる", "html": "<ruby>落<rt>お</rt></ruby>ちる", "meaning": "rơi, rớt", "example_text": "スマホが落ちる。", "example_html": "スマホが<ruby>落<rt>お</rt></ruby>ちる。", "example_vn": "Điện thoại bị rơi."}}, {"vt": {"kanji": "壊す", "html": "<ruby>壊<rt>こわ</rt></ruby>す", "meaning": "làm hỏng, phá hỏng", "example_text": "（私が）時計を壊した。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>時計<rt>とけい</rt></ruby>を<ruby>壊<rt>こわ</rt></ruby>した。", "example_vn": "(Tôi) đã làm hỏng đồng hồ."}, "vi": {"kanji": "壊れる", "html": "<ruby>壊<rt>こわ</rt></ruby>れる", "meaning": "bị hỏng, bị vỡ", "example_text": "時計が壊れた。", "example_html": "<ruby>時計<rt>とけい</rt></ruby>が<ruby>壊<rt>こわ</rt></ruby>れた。", "example_vn": "Đồng hồ đã bị hỏng."}}, {"vt": {"kanji": "汚す", "html": "<ruby>汚<rt>よご</rt></ruby>す", "meaning": "làm bẩn", "example_text": "（私が）服を汚す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>服<rt>ふく</rt></ruby>を<ruby>汚<rt>よご</rt></ruby>す。", "example_vn": "(Tôi) làm bẩn quần áo."}, "vi": {"kanji": "汚れる", "html": "<ruby>汚<rt>よご</rt></ruby>れる", "meaning": "bị bẩn", "example_text": "服が汚れる。", "example_html": "<ruby>服<rt>ふく</rt></ruby>が<ruby>汚<rt>よご</rt></ruby>れる。", "example_vn": "Quần áo bị bẩn."}}, {"vt": {"kanji": "沸かす", "html": "<ruby>沸<rt>わ</rt></ruby>かす", "meaning": "đun sôi, nấu sôi", "example_text": "（私が）お湯を沸かす。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）お<ruby>湯<rt>ゆ</rt></ruby>を<ruby>沸<rt>わ</rt></ruby>かす。", "example_vn": "(Tôi) đun sôi nước."}, "vi": {"kanji": "沸く", "html": "<ruby>沸<rt>わ</rt></ruby>く", "meaning": "sôi", "example_text": "お湯が沸く。", "example_html": "お<ruby>湯<rt>ゆ</rt></ruby>が<ruby>沸<rt>わ</rt></ruby>く。", "example_vn": "Nước sôi."}}, {"vt": {"kanji": "始める", "html": "<ruby>始<rt>はじ</rt></ruby>める", "meaning": "bắt đầu (cái gì)", "example_text": "（私が）授業を始める。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>授業<rt>じゅぎょう</rt></ruby>を<ruby>始<rt>はじ</rt></ruby>める。", "example_vn": "(Tôi) bắt đầu tiết học."}, "vi": {"kanji": "始まる", "html": "<ruby>始<rt>はじ</rt></ruby>まる", "meaning": "bắt đầu", "example_text": "授業が始まる。", "example_html": "<ruby>授業<rt>じゅぎょう</rt></ruby>が<ruby>始<rt>はじ</rt></ruby>まる。", "example_vn": "Tiết học bắt đầu."}}, {"vt": {"kanji": "終える", "html": "<ruby>終<rt>お</rt></ruby>える", "meaning": "kết thúc, hoàn thành (cái gì)", "example_text": "（私が）宿題を終える。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>宿題<rt>しゅくだい</rt></ruby>を<ruby>終<rt>お</rt></ruby>える。", "example_vn": "(Tôi) hoàn thành bài tập về nhà."}, "vi": {"kanji": "終わる", "html": "<ruby>終<rt>お</rt></ruby>わる", "meaning": "kết thúc, xong", "example_text": "宿題が終わる。", "example_html": "<ruby>宿題<rt>しゅくだい</rt></ruby>が<ruby>終<rt>お</rt></ruby>わる。", "example_vn": "Bài tập về nhà đã xong."}}, {"vt": {"kanji": "続ける", "html": "<ruby>続<rt>つづ</rt></ruby>ける", "meaning": "tiếp tục (cái gì)", "example_text": "（私が）話を続ける。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>話<rt>はなし</rt></ruby>を<ruby>続<rt>つづ</rt></ruby>ける。", "example_vn": "(Tôi) tiếp tục câu chuyện."}, "vi": {"kanji": "続く", "html": "<ruby>続<rt>つづ</rt></ruby>く", "meaning": "tiếp diễn, kéo dài", "example_text": "話が続く。", "example_html": "<ruby>話<rt>はなし</rt></ruby>が<ruby>続<rt>つづ</rt></ruby>く。", "example_vn": "Câu chuyện tiếp diễn."}}, {"vt": {"kanji": "決める", "html": "<ruby>決<rt>き</rt></ruby>める", "meaning": "quyết định (cái gì)", "example_text": "（私が）日程を決める。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>日程<rt>にってい</rt></ruby>を<ruby>決<rt>き</rt></ruby>める。", "example_vn": "(Tôi) quyết định lịch trình."}, "vi": {"kanji": "決まる", "html": "<ruby>決<rt>き</rt></ruby>まる", "meaning": "được quyết định", "example_text": "日程が決まる。", "example_html": "<ruby>日程<rt>にってい</rt></ruby>が<ruby>決<rt>き</rt></ruby>まる。", "example_vn": "Lịch trình đã được quyết định."}}, {"vt": {"kanji": "起こす", "html": "<ruby>起<rt>お</rt></ruby>こす", "meaning": "đánh thức", "example_text": "（私が）息子を起こした。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>息子<rt>むすこ</rt></ruby>を<ruby>起<rt>お</rt></ruby>こした。", "example_vn": "(Tôi) đã đánh thức con trai."}, "vi": {"kanji": "起きる", "html": "<ruby>起<rt>お</rt></ruby>きる", "meaning": "thức dậy", "example_text": "息子が起きた。", "example_html": "<ruby>息子<rt>むすこ</rt></ruby>が<ruby>起<rt>お</rt></ruby>きた。", "example_vn": "Con trai đã thức dậy."}}, {"vt": {"kanji": "集める", "html": "<ruby>集<rt>あつ</rt></ruby>める", "meaning": "thu thập, tập hợp (cái gì/ai)", "example_text": "（私が）人を集める。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>人<rt>ひと</rt></ruby>を<ruby>集<rt>あつ</rt></ruby>める。", "example_vn": "(Tôi) tập hợp mọi người."}, "vi": {"kanji": "集まる", "html": "<ruby>集<rt>あつ</rt></ruby>まる", "meaning": "tập trung lại, tụ tập", "example_text": "人が集まる。", "example_html": "<ruby>人<rt>ひと</rt></ruby>が<ruby>集<rt>あつ</rt></ruby>まる。", "example_vn": "Mọi người tụ tập lại."}}, {"vt": {"kanji": "変える", "html": "<ruby>変<rt>か</rt></ruby>える", "meaning": "thay đổi, đổi (cái gì)", "example_text": "（私が）色を変える。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>色<rt>いろ</rt></ruby>を<ruby>変<rt>か</rt></ruby>える。", "example_vn": "(Tôi) thay đổi màu sắc."}, "vi": {"kanji": "変わる", "html": "<ruby>変<rt>か</rt></ruby>わる", "meaning": "thay đổi, biến đổi", "example_text": "色が変わる。", "example_html": "<ruby>色<rt>いろ</rt></ruby>が<ruby>変<rt>か</rt></ruby>わる。", "example_vn": "Màu sắc thay đổi."}}, {"vt": {"kanji": "治す", "html": "<ruby>治<rt>なお</rt></ruby>す", "meaning": "chữa trị, chữa lành", "example_text": "（私が）怪我を治す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>怪我<rt>けが</rt></ruby>を<ruby>治<rt>なお</rt></ruby>す。", "example_vn": "(Tôi) chữa lành vết thương."}, "vi": {"kanji": "治る", "html": "<ruby>治<rt>なお</rt></ruby>る", "meaning": "khỏi (bệnh), lành (vết thương)", "example_text": "怪我が治る。", "example_html": "<ruby>怪我<rt>けが</rt></ruby>が<ruby>治<rt>なお</rt></ruby>る。", "example_vn": "Vết thương đã lành."}}, {"vt": {"kanji": "残す", "html": "<ruby>残<rt>のこ</rt></ruby>す", "meaning": "để lại, chừa lại", "example_text": "（私が）ご飯を残した。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）ご<ruby>飯<rt>はん</rt></ruby>を<ruby>残<rt>のこ</rt></ruby>した。", "example_vn": "(Tôi) đã để thừa cơm."}, "vi": {"kanji": "残る", "html": "<ruby>残<rt>のこ</rt></ruby>る", "meaning": "còn lại, sót lại", "example_text": "ご飯が残った。", "example_html": "ご<ruby>飯<rt>はん</rt></ruby>が<ruby>残<rt>のこ</rt></ruby>った。", "example_vn": "Cơm còn thừa lại."}}, {"vt": {"kanji": "冷やす", "html": "<ruby>冷<rt>ひ</rt></ruby>やす", "meaning": "làm lạnh, ướp lạnh", "example_text": "（私が）今からビールを冷やします。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>今<rt>いま</rt></ruby>からビールを<ruby>冷<rt>ひ</rt></ruby>やします。", "example_vn": "(Tôi) sẽ làm lạnh bia từ bây giờ."}, "vi": {"kanji": "冷える", "html": "<ruby>冷<rt>ひ</rt></ruby>える", "meaning": "trở nên lạnh, nguội đi", "example_text": "もうビールが冷えていますよ。", "example_html": "もうビールが<ruby>冷<rt>ひ</rt></ruby>えていますよ。", "example_vn": "Bia đã lạnh rồi đấy."}}, {"vt": {"kanji": "戻す", "html": "<ruby>戻<rt>もど</rt></ruby>す", "meaning": "trả về, để lại chỗ cũ", "example_text": "（私が）元の場所に戻す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>元<rt>もと</rt></ruby>の<ruby>場所<rt>ばしょ</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>す。", "example_vn": "(Tôi) để lại đúng chỗ cũ."}, "vi": {"kanji": "戻る", "html": "<ruby>戻<rt>もど</rt></ruby>る", "meaning": "quay lại, trở về", "example_text": "家に戻る。", "example_html": "<ruby>家<rt>いえ</rt></ruby>に<ruby>戻<rt>もど</rt></ruby>る。", "example_vn": "Trở về nhà."}}, {"vt": {"kanji": "燃やす", "html": "<ruby>燃<rt>も</rt></ruby>やす", "meaning": "đốt, thiêu đốt", "example_text": "（私が）木を燃やす。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>木<rt>き</rt></ruby>を<ruby>燃<rt>も</rt></ruby>やす。", "example_vn": "(Tôi) đốt cây gỗ."}, "vi": {"kanji": "燃える", "html": "<ruby>燃<rt>も</rt></ruby>える", "meaning": "cháy, bốc cháy", "example_text": "木が燃える。", "example_html": "<ruby>木<rt>き</rt></ruby>が<ruby>燃<rt>も</rt></ruby>える。", "example_vn": "Cây gỗ cháy."}}, {"vt": {"kanji": "倒す", "html": "<ruby>倒<rt>たお</rt></ruby>す", "meaning": "xô ngã, đánh bại, làm đổ", "example_text": "（私が）敵を倒した。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>敵<rt>てき</rt></ruby>を<ruby>倒<rt>たお</rt></ruby>した。", "example_vn": "(Tôi) đã đánh bại kẻ địch."}, "vi": {"kanji": "倒れる", "html": "<ruby>倒<rt>たお</rt></ruby>れる", "meaning": "ngã, đổ, xỉu", "example_text": "敵が倒れた。", "example_html": "<ruby>敵<rt>てき</rt></ruby>が<ruby>倒<rt>たお</rt></ruby>れた。", "example_vn": "Kẻ địch đã ngã xuống."}}, {"vt": {"kanji": "見つける", "html": "<ruby>見<rt>み</rt></ruby>つける", "meaning": "tìm thấy, tìm ra", "example_text": "（私が）財布を見つけた。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>財布<rt>さいふ</rt></ruby>を<ruby>見<rt>み</rt></ruby>つけた。", "example_vn": "(Tôi) đã tìm thấy ví tiền."}, "vi": {"kanji": "見つかる", "html": "<ruby>見<rt>み</rt></ruby>つかる", "meaning": "được tìm thấy, tìm ra", "example_text": "財布が見つかった。", "example_html": "<ruby>財布<rt>さいふ</rt></ruby>が<ruby>見<rt>み</rt></ruby>つかった。", "example_vn": "Ví tiền đã được tìm thấy."}}, {"vt": {"kanji": "乾かす", "html": "<ruby>乾<rt>かわ</rt></ruby>かす", "meaning": "sấy khô, phơi khô", "example_text": "（私が）髪を乾かした。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>髪<rt>かみ</rt></ruby>を<ruby>乾<rt>かわ</rt></ruby>かした。", "example_vn": "(Tôi) đã sấy khô tóc."}, "vi": {"kanji": "乾く", "html": "<ruby>乾<rt>かわ</rt></ruby>く", "meaning": "khô, ráo", "example_text": "髪が乾いた。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>が<ruby>乾<rt>かわ</rt></ruby>いた。", "example_vn": "Tóc đã khô."}}, {"vt": {"kanji": "切る", "html": "<ruby>切<rt>き</rt></ruby>る", "meaning": "cắt (cái gì)", "example_text": "（私が）紙を切った。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>紙<rt>かみ</rt></ruby>を<ruby>切<rt>き</rt></ruby>った。", "example_vn": "(Tôi) đã cắt giấy."}, "vi": {"kanji": "切れる", "html": "<ruby>切<rt>き</rt></ruby>れる", "meaning": "bị đứt, rách", "example_text": "カバンの紐が切れた。", "example_html": "カバンの<ruby>紐<rt>ひも</rt></ruby>が<ruby>切<rt>き</rt></ruby>れた。", "example_vn": "Dây quai cặp bị đứt."}}, {"vt": {"kanji": "助ける", "html": "<ruby>助<rt>たす</rt></ruby>ける", "meaning": "cứu giúp, giúp đỡ", "example_text": "（私が）溺れている人を助けた。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）溺れている<ruby>人<rt>ひと</rt></ruby>を<ruby>助<rt>たす</rt></ruby>けた。", "example_vn": "(Tôi) đã cứu người đang chết đuối."}, "vi": {"kanji": "助かる", "html": "<ruby>助<rt>たす</rt></ruby>かる", "meaning": "được cứu, thoát nạn, đỡ quá", "example_text": "おかげで、助かったよ。", "example_html": "おかげで、<ruby>助<rt>たす</rt></ruby>かったよ。", "example_vn": "Nhờ vậy mà thoát nạn đấy."}}, {"vt": {"kanji": "ためる", "html": "ためる", "meaning": "tích lũy, dành dụm", "example_text": "（私が）お金をためる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）お<ruby>金<rt>かね</rt></ruby>をためる。", "example_vn": "(Tôi) tiết kiệm tiền."}, "vi": {"kanji": "たまる", "html": "たまる", "meaning": "tích tụ, dồn ứ, đọng lại", "example_text": "お金がたまる。", "example_html": "お<ruby>金<rt>かね</rt></ruby>がたまる。", "example_vn": "Tiền được tích lũy dần."}}, {"vt": {"kanji": "鳴らす", "html": "<ruby>鳴<rt>な</rt></ruby>らす", "meaning": "làm rung chuông, bấm chuông, thổi còi", "example_text": "（私が）鐘を鳴らす。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>鐘<rt>かね</rt></ruby>を<ruby>鳴<rt>な</rt></ruby>らす。", "example_vn": "(Tôi) rung chuông."}, "vi": {"kanji": "鳴る", "html": "<ruby>鳴<rt>な</rt></ruby>る", "meaning": "kêu, reo, vang lên", "example_text": "鐘が鳴る。", "example_html": "<ruby>鐘<rt>かね</rt></ruby>が<ruby>鳴<rt>な</rt></ruby>る。", "example_vn": "Chuông vang lên."}}, {"vt": {"kanji": "染める", "html": "<ruby>染<rt>そ</rt></ruby>める", "meaning": "nhuộm (tóc, vải)", "example_text": "（私が）髪を染める。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>髪<rt>かみ</rt></ruby>を<ruby>染<rt>そ</rt></ruby>める。", "example_vn": "(Tôi) nhuộm tóc."}, "vi": {"kanji": "染まる", "html": "<ruby>染<rt>そ</rt></ruby>まる", "meaning": "nhuốm màu, đổi màu", "example_text": "赤色に染まる。", "example_html": "<ruby>赤<ruby>色<rt>いろ</rt></ruby><rt>あかいろ</rt></ruby>に<ruby>染<rt>そ</rt></ruby>まる。", "example_vn": "Nhuốm thành màu đỏ."}}, {"vt": {"kanji": "溶かす", "html": "<ruby>溶<rt>と</rt></ruby>かす", "meaning": "làm tan chảy, hòa tan", "example_text": "（私が）チーズを溶かす。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）チーズを<ruby>溶<rt>と</rt></ruby>かす。", "example_vn": "(Tôi) làm tan chảy phô mai."}, "vi": {"kanji": "溶ける", "html": "<ruby>溶<rt>と</rt></ruby>ける", "meaning": "tan chảy, hòa tan", "example_text": "アイスが溶ける。", "example_html": "アイスが<ruby>溶<rt>と</rt></ruby>ける。", "example_vn": "Kem bị tan chảy."}}, {"vt": {"kanji": "重ねる", "html": "<ruby>重<rt>かさ</rt></ruby>ねる", "meaning": "chồng lên, xếp chồng lên", "example_text": "（私が）本を積み重ねる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>本<rt>ほん</rt></ruby>を<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>ねる。", "example_vn": "(Tôi) xếp chồng sách lên nhau."}, "vi": {"kanji": "重なる", "html": "<ruby>重<rt>かさ</rt></ruby>なる", "meaning": "chồng chất, trùng lặp", "example_text": "本が積み重なる。", "example_html": "<ruby>本<rt>ほん</rt></ruby>が<ruby>積<rt>つ</rt></ruby>み<ruby>重<rt>かさ</rt></ruby>なる。", "example_vn": "Sách chất chồng lên nhau."}}, {"vt": {"kanji": "潰す", "html": "<ruby>潰<rt>つぶ</rt></ruby>す", "meaning": "nghiền nát, đè bẹp", "example_text": "（私が）じゃがいもを潰した。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）じゃがいもを<ruby>潰<rt>つぶ</rt></ruby>した。", "example_vn": "(Tôi) đã nghiền nát khoai tây."}, "vi": {"kanji": "潰れる", "html": "<ruby>潰<rt>つぶ</rt></ruby>れる", "meaning": "bị nát, bị bẹp, bị sập", "example_text": "地震で家が潰れた。", "example_html": "<ruby>地震<rt>じしん</rt></ruby>で<ruby>家<rt>いえ</rt></ruby>が<ruby>潰<rt>つぶ</rt></ruby>れた。", "example_vn": "Nhà đã bị sập vì động đất."}}, {"vt": {"kanji": "曲げる", "html": "<ruby>曲<rt>ま</rt></ruby>げる", "meaning": "uốn cong, bẻ cong", "example_text": "（私が）スプーンを曲げる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）スプーンを<ruby>曲<rt>ま</rt></ruby>げる。", "example_vn": "(Tôi) bẻ cong cái thìa."}, "vi": {"kanji": "曲がる", "html": "<ruby>曲<rt>ま</rt></ruby>がる", "meaning": "bị cong, rẽ (hướng)", "example_text": "スプーンが曲がる。", "example_html": "スプーンが<ruby>曲<rt>ま</rt></ruby>がる。", "example_vn": "Cái thìa bị cong."}}, {"vt": {"kanji": "捕まえる", "html": "<ruby>捕<rt>つか</rt></ruby>まえる", "meaning": "bắt giữ, tóm lấy", "example_text": "（私が）犯人を捕まえる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>犯<ruby>人<rt>ひと</rt></ruby><rt>はんにん</rt></ruby>を<ruby>捕<rt>つか</rt></ruby>まえる。", "example_vn": "(Tôi) bắt giữ thủ phạm."}, "vi": {"kanji": "捕まる", "html": "<ruby>捕<rt>つか</rt></ruby>まる", "meaning": "bị bắt, nắm lấy", "example_text": "犯人が捕まる。", "example_html": "<ruby>犯<ruby>人<rt>ひと</rt></ruby><rt>はんにん</rt></ruby>が<ruby>捕<rt>つか</rt></ruby>まる。", "example_vn": "Thủ phạm đã bị bắt."}}, {"vt": {"kanji": "積む", "html": "<ruby>積<rt>つ</rt></ruby>む", "meaning": "chất lên, xếp lên", "example_text": "（私が）荷物をトラックに積む。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>荷物<rt>にもつ</rt></ruby>をトラックに<ruby>積<rt>つ</rt></ruby>む。", "example_vn": "(Tôi) chất hàng lên xe tải."}, "vi": {"kanji": "積もる", "html": "<ruby>積<rt>つ</rt></ruby>もる", "meaning": "chất đống, tích tụ (tuyết)", "example_text": "雪が積もる。", "example_html": "<ruby>雪<rt>ゆき</rt></ruby>が<ruby>積<rt>つ</rt></ruby>もる。", "example_vn": "Tuyết chất đống."}}, {"vt": {"kanji": "並べる", "html": "<ruby>並<rt>なら</rt></ruby>べる", "meaning": "sắp xếp, bày ra", "example_text": "（私が）椅子を並べる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>椅子<rt>いす</rt></ruby>を<ruby>並<rt>なら</rt></ruby>べる。", "example_vn": "(Tôi) sắp xếp ghế."}, "vi": {"kanji": "並ぶ", "html": "<ruby>並<rt>なら</rt></ruby>ぶ", "meaning": "xếp hàng, đứng thẳng hàng", "example_text": "列に並ぶ。", "example_html": "<ruby>列<rt>れつ</rt></ruby>に<ruby>並<rt>なら</rt></ruby>ぶ。", "example_vn": "Xếp hàng thành dãy."}}, {"vt": {"kanji": "こぼす", "html": "<ruby>こぼす</ruby>", "meaning": "làm đổ, làm tràn", "example_text": "（私が）ジュースをこぼす。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）ジュースをこぼす。", "example_vn": "(Tôi) làm đổ nước trái cây."}, "vi": {"kanji": "こぼれる", "html": "こぼれる", "meaning": "bị đổ, bị tràn ra", "example_text": "ジュースがこぼれる。", "example_html": "ジュースがこぼれる。", "example_vn": "Nước trái cây bị đổ ra."}}, {"vt": {"kanji": "乱す", "html": "<ruby>乱<rt>みだ</rt></ruby>す", "meaning": "làm rối loạn, làm mất trật tự", "example_text": "（私が）髪を乱す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>髪<rt>かみ</rt></ruby>を<ruby>乱<rt>みだ</rt></ruby>す。", "example_vn": "(Tôi) làm rối tóc."}, "vi": {"kanji": "乱れる", "html": "<ruby>乱<rt>みだ</rt></ruby>れる", "meaning": "bị rối, xáo trộn, mất trật tự", "example_text": "髪が乱れる。", "example_html": "<ruby>髪<rt>かみ</rt></ruby>が<ruby>乱<rt>みだ</rt></ruby>れる。", "example_vn": "Tóc bị rối."}}, {"vt": {"kanji": "届ける", "html": "<ruby>届<rt>とど</rt></ruby>ける", "meaning": "gửi đến, chuyển phát, báo cáo", "example_text": "（私が）手紙を届ける。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby><ruby>手<rt>て</rt></ruby><ruby>紙<rt>かみ</rt></ruby><rt>てがみ</rt></ruby>を<ruby>届<rt>とど</rt></ruby>ける。", "example_vn": "(Tôi) chuyển phát lá thư."}, "vi": {"kanji": "届く", "html": "<ruby>届<rt>とど</rt></ruby>く", "meaning": "được gửi đến, chạm tới", "example_text": "手紙が届く。", "example_html": "<ruby><ruby>手<rt>て</rt></ruby><ruby>紙<rt>かみ</rt></ruby><rt>てがみ</rt></ruby>が<ruby>届<rt>とど</rt></ruby>く。", "example_vn": "Lá thư đã được gửi đến."}}, {"vt": {"kanji": "回す", "html": "<ruby>回<rt>まわ</rt></ruby>す", "meaning": "xoay, quay (vật gì)", "example_text": "（私が）地球儀を回す。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby><ruby>地球<rt>ちきゅう</rt></ruby>儀<rt>ちきゅうぎ</rt></ruby>を<ruby>回<rt>まわ</rt></ruby>す。", "example_vn": "(Tôi) xoay quả địa cầu."}, "vi": {"kanji": "回る", "html": "<ruby>回<rt>まわ</rt></ruby>る", "meaning": "quay, xoay quanh", "example_text": "地球が回る。", "example_html": "<ruby>地球<rt>ちきゅう</rt></ruby>が<ruby>回<rt>まわ</rt></ruby>る。", "example_vn": "Trái đất quay."}}, {"vt": {"kanji": "折る", "html": "<ruby>折<rt>お</rt></ruby>る", "meaning": "bẻ gãy, gập lại", "example_text": "（私が）骨を折る。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>骨<rt>ほね</rt></ruby>を<ruby>折<rt>お</rt></ruby>る。", "example_vn": "(Tôi) làm gãy xương."}, "vi": {"kanji": "折れる", "html": "<ruby>折<rt>お</rt></ruby>れる", "meaning": "bị gãy, gập", "example_text": "骨が折れる。", "example_html": "<ruby>骨<rt>ほね</rt></ruby>が<ruby>折<rt>お</rt></ruby>れる。", "example_vn": "Xương bị gãy."}}, {"vt": {"kanji": "破る", "html": "<ruby>破<rt>やぶ</rt></ruby>る", "meaning": "xé rách, phá vỡ", "example_text": "（私が）紙を破る。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>紙<rt>かみ</rt></ruby>を<ruby>破<rt>やぶ</rt></ruby>る。", "example_vn": "(Tôi) xé rách giấy."}, "vi": {"kanji": "破れる", "html": "<ruby>破<rt>やぶ</rt></ruby>れる", "meaning": "bị rách, thủng", "example_text": "紙が破れる。", "example_html": "<ruby>紙<rt>かみ</rt></ruby>が<ruby>破<rt>やぶ</rt></ruby>れる。", "example_vn": "Giấy bị rách."}}, {"vt": {"kanji": "割る", "html": "<ruby>割<rt>わ</rt></ruby>る", "meaning": "làm vỡ, đập vỡ, chia nhỏ", "example_text": "（私が）お皿を割る。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）お<ruby>皿<rt>さら</rt></ruby>を<ruby>割<rt>わ</rt></ruby>る。", "example_vn": "(Tôi) làm vỡ cái đĩa."}, "vi": {"kanji": "割れる", "html": "<ruby>割<rt>わ</rt></ruby>れる", "meaning": "bị vỡ, nứt", "example_text": "お皿が割れる。", "example_html": "お<ruby>皿<rt>さら</rt></ruby>が<ruby>割<rt>わ</rt></ruby>れる。", "example_vn": "Cái đĩa bị vỡ."}}, {"vt": {"kanji": "上げる", "html": "<ruby>上<rt>あ</rt></ruby>げる", "meaning": "nâng lên, giơ lên", "example_text": "（私が）手を上げる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>手<rt>て</rt></ruby>を<ruby>上<rt>あ</rt></ruby>げる。", "example_vn": "(Tôi) giơ tay lên."}, "vi": {"kanji": "上がる", "html": "<ruby>上<rt>あ</rt></ruby>がる", "meaning": "tăng lên, lên cao", "example_text": "気温が上がる。", "example_html": "<ruby>気温<rt>きおん</rt></ruby>が<ruby>上<rt>あ</rt></ruby>がる。", "example_vn": "Nhiệt độ tăng lên."}}, {"vt": {"kanji": "下げる", "html": "<ruby>下<rt>さ</rt></ruby>げる", "meaning": "hạ xuống, giảm xuống", "example_text": "（私が）手を下げる。", "example_html": "（<ruby>私<rt>わたし</rt></ruby>が）<ruby>手<rt>て</rt></ruby>を<ruby>下<rt>さ</rt></ruby>げる。", "example_vn": "(Tôi) hạ tay xuống."}, "vi": {"kanji": "下がる", "html": "<ruby>下<rt>さ</rt></ruby>がる", "meaning": "giảm xuống, hạ xuống", "example_text": "気温が下がる。", "example_html": "<ruby>気温<rt>きおん</rt></ruby>が<ruby>下<rt>さ</rt></ruby>がる。", "example_vn": "Nhiệt độ giảm xuống."}}];
     let currentIndex = 0;
+
+    // --- Admin settings: show/hide Vietnamese translation of example sentences ---
+    let showExampleVN = localStorage.getItem('showExampleVN');
+    showExampleVN = showExampleVN === null ? true : showExampleVN === 'true';
+
+    function onToggleExampleVN(checked) {
+        showExampleVN = checked;
+        localStorage.setItem('showExampleVN', checked);
+        renderCard();
+    }
+
+    function openAdmin(event) {
+        if (event) event.stopPropagation();
+        document.getElementById('toggle-example-vn').checked = showExampleVN;
+        document.getElementById('admin-search').value = '';
+        document.getElementById('admin-overlay').classList.add('show');
+        renderAdminTable();
+    }
+
+    function closeAdmin() {
+        document.getElementById('admin-overlay').classList.remove('show');
+    }
+
+    function closeAdminOnOverlay(event) {
+        if (event.target.id === 'admin-overlay') closeAdmin();
+    }
+
+    function renderAdminTable() {
+        const query = document.getElementById('admin-search').value.trim().toLowerCase();
+        const thead = document.getElementById('admin-thead');
+        const tbody = document.getElementById('admin-tbody');
+
+        thead.innerHTML = `<tr>
+            <th>Tha động từ (他動詞)</th><th>Nghĩa</th><th>Câu ví dụ</th><th>Bản dịch VN</th>
+            <th>Tự động từ (自動詞)</th><th>Nghĩa</th><th>Câu ví dụ</th><th>Bản dịch VN</th>
+        </tr>`;
+
+        const filtered = flashcards.filter(c => {
+            if (!query) return true;
+            const hay = [c.vt.kanji, c.vt.meaning, c.vt.example_text, c.vt.example_vn,
+                         c.vi.kanji, c.vi.meaning, c.vi.example_text, c.vi.example_vn].join(' ').toLowerCase();
+            return hay.includes(query);
+        });
+
+        document.getElementById('admin-count').textContent = `${filtered.length} / ${flashcards.length} thẻ`;
+
+        tbody.innerHTML = filtered.map(c => `
+            <tr>
+                <td>${c.vt.kanji}</td>
+                <td>${c.vt.meaning}</td>
+                <td>${c.vt.example_text}</td>
+                <td>${c.vt.example_vn || ''}</td>
+                <td>${c.vi.kanji}</td>
+                <td>${c.vi.meaning}</td>
+                <td>${c.vi.example_text}</td>
+                <td>${c.vi.example_vn || ''}</td>
+            </tr>
+        `).join('');
+    }
 
     function toggleMenu(event) {
         event.stopPropagation();
@@ -274,14 +495,16 @@
         // Front (Transitive)
         document.getElementById('front-headword').innerHTML = card.vt.html;
         document.getElementById('front-vn').textContent = card.vt.meaning;
-        document.getElementById('front-example').innerHTML = card.vt.example_html;
+        document.getElementById('front-example').innerHTML = card.vt.example_html +
+            (showExampleVN && card.vt.example_vn ? `<div class="example-vn">${card.vt.example_vn}</div>` : '');
         
         document.getElementById('front-speaker').onclick = (e) => speakText(card.vt.example_html, e);
         
         // Back (Intransitive)
         document.getElementById('back-headword').innerHTML = card.vi.html;
         document.getElementById('back-vn').textContent = card.vi.meaning;
-        document.getElementById('back-example').innerHTML = card.vi.example_html;
+        document.getElementById('back-example').innerHTML = card.vi.example_html +
+            (showExampleVN && card.vi.example_vn ? `<div class="example-vn">${card.vi.example_vn}</div>` : '');
         
         document.getElementById('back-speaker').onclick = (e) => speakText(card.vi.example_html, e);
         
