@@ -334,7 +334,8 @@
             <button class="icon-btn" onclick="toggleMenu(event)">💡</button>
             <div id="dropdown-menu" class="dropdown-content">
                 <a href="index.html">Từ trái nghĩa (Tính từ)</a>
-                <a href="verbs.html">Tự/Tha động từ (自動詞他動詞練習)</a>
+                <a href="verbs.html" style="color: #9C27B0;">Tự/Tha động từ (自動詞他動詞練習)</a>
+                <a href="doushi.html">Động từ chung (一般動詞の対義語)</a>
             </div>
         </div>
         <h2>Động từ (Tự / Tha)</h2>
@@ -474,19 +475,48 @@
         }
     }
 
-    function speakText(text, event) {
-        if (event) event.stopPropagation();
+    // --- TTS LOGIC (Edge TTS via the KANJI project's Vercel proxy, with
+    // browser SpeechSynthesis as a fallback if the network call fails) ---
+    const TTS_ENDPOINT = 'https://kanji-beta.vercel.app/api/tts';
+    const ttsCache = new Map();
+    let currentAudio = null;
+
+    function speakFallback(text) {
         if (!('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel();
-        
-        // Remove ruby tags for speech
-        let cleanText = text.replace(/<rt>.*?<\/rt>/g, '');
-        cleanText = cleanText.replace(/<[^>]+>/g, '');
-        
-        const utterance = new SpeechSynthesisUtterance(cleanText);
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ja-JP';
         utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
+    }
+
+    function speakText(text, event) {
+        if (event) event.stopPropagation();
+        // Remove ruby tags (<rt>) and any other HTML markup before speaking
+        const clean = (text || '').replace(/<rt>[\s\S]*?<\/rt>/g, '').replace(/<[^>]+>/g, '').trim();
+        if (!clean) return;
+
+        if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+        const btn = event ? event.currentTarget : null;
+
+        const cachedUrl = ttsCache.get(clean);
+        if (cachedUrl) {
+            currentAudio = new Audio(cachedUrl);
+            currentAudio.play().catch(() => speakFallback(clean));
+            return;
+        }
+
+        if (btn) { btn.dataset.origText = btn.textContent; btn.textContent = '⏳'; }
+        fetch(`${TTS_ENDPOINT}?text=${encodeURIComponent(clean)}&voice=ja-JP-NanamiNeural`)
+            .then(res => { if (!res.ok) throw new Error('tts failed'); return res.blob(); })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                ttsCache.set(clean, url);
+                currentAudio = new Audio(url);
+                return currentAudio.play();
+            })
+            .catch(() => speakFallback(clean))
+            .finally(() => { if (btn) btn.textContent = btn.dataset.origText || '🔊'; });
     }
 
     function renderCard() {
