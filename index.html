@@ -5,9 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Từ Trái Nghĩa Tiếng Nhật</title>
     <style>
+        :root {
+            --sand-50: #FBF8F1;
+            --sand-100: #F6F0E4;
+            --sand-200: #EDE2CB;
+            --sand-300: #E0CFA8;
+            --sand-400: #CBAE78;
+            --sand-500: #B08D57;
+            --sand-600: #8C6D3F;
+            --sand-700: #6B5230;
+            --sand-800: #4C3A22;
+            --lemon-100: #FDFAE2;
+            --lemon-200: #FAF3B8;
+            --lemon-300: #F4E888;
+            --leaf-100: #E7F3DE;
+            --leaf-200: #D0E8BE;
+            --leaf-300: #B4D89A;
+            --leaf-400: #95C476;
+            --kanjibrown: #6B4226;
+            --kanjibrown-dark: #4A2C18;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: var(--sand-100);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,9 +40,9 @@
             max-width: 500px;
             padding: 20px;
             text-align: center;
-            background: #fff;
+            background: var(--sand-50);
             border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px -8px rgba(107, 66, 38, 0.35);
         }
         /* Flashcard Mode Styles */
         .flashcard-container {
@@ -37,9 +57,10 @@
             position: relative;
             transition: transform 0.6s;
             transform-style: preserve-3d;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(107, 66, 38, 0.2);
             border-radius: 15px;
-            background-color: white;
+            background-color: var(--lemon-200);
+            border: 2px solid var(--lemon-300);
         }
         .flashcard.is-flipped {
             transform: rotateY(180deg);
@@ -59,28 +80,29 @@
         }
         .card-back {
             transform: rotateY(180deg);
-            background-color: #fdfbf7;
-            border: 2px solid #e0dcd3;
+            background-color: var(--lemon-100);
+            border: 2px solid var(--lemon-300);
         }
         .lesson-tag {
             position: absolute;
             top: 15px;
             left: 15px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: var(--leaf-300);
+            color: var(--kanjibrown-dark);
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 14px;
             font-weight: bold;
         }
         .lesson-tag.new-word {
-            background-color: #FF9800;
+            background-color: var(--sand-500);
+            color: var(--sand-50);
         }
         .speaker-btn {
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: #f0f0f0;
+            background-color: var(--sand-200);
             border: none;
             font-size: 24px;
             cursor: pointer;
@@ -91,30 +113,30 @@
             align-items: center;
             width: 45px;
             height: 45px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(107, 66, 38, 0.15);
         }
         .speaker-btn:hover {
-            background-color: #e0e0e0;
+            background-color: var(--sand-300);
         }
         .word-kana {
             font-size: 48px;
             font-weight: bold;
-            color: #333;
+            color: var(--kanjibrown);
             margin-bottom: 10px;
         }
         .word-kanji {
             font-size: 24px;
-            color: #666;
+            color: var(--sand-700);
             margin-bottom: 15px;
         }
         .word-vn {
             font-size: 22px;
-            color: #1976D2;
+            color: var(--kanjibrown-dark);
             font-weight: bold;
         }
         .no-antonym {
             font-size: 32px;
-            color: #9e9e9e;
+            color: var(--sand-400);
             font-weight: bold;
         }
         .controls {
@@ -124,8 +146,8 @@
             margin-top: 20px;
         }
         .nav-btn {
-            background-color: #2196F3;
-            color: white;
+            background-color: var(--leaf-200);
+            color: var(--kanjibrown);
             border: none;
             padding: 15px 30px;
             font-size: 20px;
@@ -133,21 +155,22 @@
             cursor: pointer;
         }
         .nav-btn:hover {
-            background-color: #1565C0;
+            background-color: var(--leaf-300);
         }
         .nav-btn:disabled {
-            background-color: #ccc;
+            background-color: var(--sand-200);
+            color: var(--sand-400);
             cursor: not-allowed;
             transform: none !important;
         }
         .progress {
             font-size: 18px;
-            color: #555;
+            color: var(--sand-700);
             font-weight: bold;
         }
         .mode-switch-btn {
-            background-color: #9C27B0;
-            color: white;
+            background-color: var(--sand-600);
+            color: var(--sand-50);
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -156,28 +179,47 @@
             margin-top: 10px;
         }
         .mode-switch-btn:hover {
-            background-color: #7B1FA2;
+            background-color: var(--sand-700);
+        }
+        .shuffle-btn {
+            background-color: var(--sand-600);
+            color: var(--sand-50);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .shuffle-btn:hover {
+            background-color: var(--sand-700);
+        }
+        .mode-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         /* --- Source toggle --- */
         .source-toggle-wrap { margin: 4px 0 10px; }
         .source-toggle-btn {
-            background-color: #fff3e0;
-            border: 2px solid #FF9800;
-            color: #E65100;
+            background-color: var(--lemon-100);
+            border: 2px solid var(--sand-400);
+            color: var(--kanjibrown-dark);
             padding: 8px 16px;
             font-size: 14px;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
         }
-        .source-toggle-btn:hover { background-color: #ffe0b2; }
+        .source-toggle-btn:hover { background-color: var(--lemon-200); }
 
         /* Button Animations */
-        .nav-btn, .mode-switch-btn, .quit-btn, .choice-btn, .speaker-btn, .source-toggle-btn {
+        .nav-btn, .mode-switch-btn, .shuffle-btn, .quit-btn, .choice-btn, .speaker-btn, .source-toggle-btn, .icon-circle-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .nav-btn:active, .mode-switch-btn:active, .quit-btn:active, .choice-btn:active, .speaker-btn:active, .source-toggle-btn:active {
+        .nav-btn:active, .mode-switch-btn:active, .shuffle-btn:active, .quit-btn:active, .choice-btn:active, .speaker-btn:active, .source-toggle-btn:active, .icon-circle-btn:active {
             transform: scale(0.92);
         }
 
@@ -188,15 +230,15 @@
         .small-card {
             width: 100%;
             height: 180px;
-            background-color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: var(--lemon-200);
+            box-shadow: 0 5px 15px rgba(107, 66, 38, 0.2);
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 20px 0;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--lemon-300);
             position: relative;
         }
         .small-card .word-kana {
@@ -221,7 +263,7 @@
             font-size: 18px;
         }
         .quit-btn {
-            background-color: #f44336;
+            background-color: #EF4444;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -230,7 +272,7 @@
             cursor: pointer;
         }
         .quit-btn:hover {
-            background-color: #c62828;
+            background-color: #DC2626;
         }
         .choices-container {
             display: flex;
@@ -238,9 +280,9 @@
             gap: 10px;
         }
         .choice-btn {
-            background-color: #fff;
-            border: 2px solid #2196F3;
-            color: #333;
+            background-color: var(--sand-50);
+            border: 2px solid var(--sand-300);
+            color: var(--sand-700);
             padding: 15px;
             font-size: 20px;
             border-radius: 10px;
@@ -248,17 +290,17 @@
             font-weight: bold;
         }
         .choice-btn:hover {
-            background-color: #e3f2fd;
+            background-color: var(--sand-100);
         }
         .choice-btn.correct {
-            background-color: #e8f5e9;
-            color: #333;
-            border-color: #81c784;
+            background-color: var(--leaf-200);
+            color: var(--kanjibrown-dark);
+            border-color: var(--leaf-400);
         }
         .choice-btn.wrong {
-            background-color: #ffebee;
-            color: #333;
-            border-color: #e57373;
+            background-color: #FEE2E2;
+            color: #B91C1C;
+            border-color: #FCA5A5;
         }
         .choice-btn:disabled {
             cursor: not-allowed;
@@ -272,23 +314,32 @@
         }
 
         /* --- Admin / Settings Panel --- */
-        .settings-btn {
+        .header-icons {
             position: absolute;
             right: 0;
-            background: none;
-            border: none;
-            font-size: 26px;
-            cursor: pointer;
-            transition: transform 0.2s;
+            display: flex;
+            gap: 6px;
         }
-        .settings-btn:hover { transform: rotate(30deg); }
-        .settings-btn:active { transform: scale(0.9) rotate(30deg); }
+        .icon-circle-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--sand-200);
+            color: var(--sand-700);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-circle-btn:hover { background-color: var(--sand-300); }
 
         .admin-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(74, 44, 24, 0.45);
             z-index: 100;
             justify-content: center;
             align-items: center;
@@ -297,7 +348,7 @@
         }
         .admin-overlay.show { display: flex; }
         .admin-panel {
-            background: white;
+            background: var(--sand-50);
             border-radius: 15px;
             width: 100%;
             max-width: 900px;
@@ -305,7 +356,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(74, 44, 24, 0.35);
             text-align: left;
         }
         .admin-header {
@@ -313,14 +364,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--sand-300);
         }
-        .admin-header h3 { margin: 0; font-size: 18px; }
+        .admin-header h3 { margin: 0; font-size: 18px; color: var(--kanjibrown-dark); }
         .admin-close-btn {
-            background: none; border: none; font-size: 24px; cursor: pointer; color: #888;
+            background: none; border: none; font-size: 24px; cursor: pointer; color: var(--sand-600);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .admin-close-btn:hover { color: #333; }
+        .admin-close-btn:hover { color: var(--kanjibrown-dark); }
         .admin-close-btn:active { transform: scale(0.9); }
         .admin-body {
             padding: 16px 20px;
@@ -330,16 +381,32 @@
             width: 100%;
             padding: 10px 12px;
             font-size: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--sand-300);
             border-radius: 8px;
             box-sizing: border-box;
             margin-bottom: 12px;
         }
         .admin-count {
             font-size: 13px;
-            color: #888;
+            color: var(--sand-600);
             margin-bottom: 8px;
         }
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .admin-action-btn {
+            background-color: var(--leaf-200);
+            color: var(--kanjibrown-dark);
+            border: none;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .admin-action-btn:hover { background-color: var(--leaf-300); }
         .admin-table {
             width: 100%;
             border-collapse: collapse;
@@ -347,15 +414,37 @@
         }
         .admin-table th, .admin-table td {
             padding: 8px 10px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--sand-200);
             vertical-align: top;
         }
         .admin-table th {
-            background: #f9f9f9;
+            background: var(--sand-100);
+            color: var(--kanjibrown-dark);
             position: sticky;
             top: 0;
         }
-        .admin-table tr:hover { background: #f5faff; }
+        .admin-table tr:hover { background: var(--lemon-100); }
+
+        /* --- Print --- */
+        #print-area { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                display: block;
+                position: absolute;
+                top: 0; left: 0; width: 100%;
+            }
+            #print-area h2 { color: #000; }
+            #print-area table { width: 100%; border-collapse: collapse; }
+            #print-area th, #print-area td {
+                border: 1px solid #333;
+                padding: 6px 8px;
+                font-size: 12px;
+                text-align: left;
+            }
+            #print-area th { background: #eee; }
+        }
     </style>
 </head>
 <body>
@@ -371,7 +460,10 @@
             </div>
         </div>
         <h2 id="page-title" style="margin: 0;">Từ Trái Nghĩa (Tính từ)</h2>
-        <button class="settings-btn" onclick="openAdmin(event)" title="Quản lý dữ liệu">⚙️</button>
+        <div class="header-icons">
+            <button class="icon-circle-btn" onclick="shuffleCards()" title="Xáo trộn thẻ (Shuffle)">🔀</button>
+            <button class="icon-circle-btn" onclick="openAdmin(event)" title="Quản lý dữ liệu">⚙️</button>
+        </div>
     </div>
 
     <div class="source-toggle-wrap">
@@ -442,6 +534,10 @@
         <div class="admin-body">
             <input type="text" class="admin-search" id="admin-search" placeholder="Tìm kiếm (kana, kanji, nghĩa...)" oninput="renderAdminTable()">
             <div class="admin-count" id="admin-count"></div>
+            <div class="admin-actions">
+                <button class="admin-action-btn" onclick="exportCSV()">📥 Xuất CSV</button>
+                <button class="admin-action-btn" onclick="printTable()">🖨️ In</button>
+            </div>
             <div style="overflow-x:auto;">
                 <table class="admin-table" id="admin-table">
                     <thead id="admin-thead"></thead>
@@ -451,6 +547,8 @@
         </div>
     </div>
 </div>
+
+<div id="print-area"></div>
 
 <script>
     const DATA_MNN = [{"front": {"lesson": "Lesson 8", "kana": "おおきい", "kanji": "大きい", "vn": "to, lớn"}, "back": {"lesson": "8", "kana": "ちいさい", "kanji": "小さい", "vn": "nhỏ, bé", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "ちいさい", "kanji": "小さい", "vn": "nhỏ, bé"}, "back": {"lesson": "8", "kana": "おおきい", "kanji": "大きい", "vn": "to, lớn", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "あたらしい", "kanji": "新しい", "vn": "mới"}, "back": {"lesson": "8", "kana": "ふるい", "kanji": "古い", "vn": "cũ (dùng cho đồ vật)", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "ふるい", "kanji": "古い", "vn": "cũ (dùng cho đồ vật)"}, "back": {"lesson": "8", "kana": "あたらしい", "kanji": "新しい", "vn": "mới", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "いい/よい", "kanji": "良い", "vn": "tốt, hay"}, "back": {"lesson": "8", "kana": "わるい", "kanji": "悪い", "vn": "xấu, tồi, tệ", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "わるい", "kanji": "悪い", "vn": "xấu, tồi, tệ"}, "back": {"lesson": "8", "kana": "いい/よい", "kanji": "良い", "vn": "tốt, hay", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "あつい", "kanji": "暑い", "vn": "nóng (thời tiết)"}, "back": {"lesson": "8", "kana": "さむい", "kanji": "寒い", "vn": "lạnh, rét (thời tiết)", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "あつい", "kanji": "熱い", "vn": "nóng (nhiệt độ đồ vật)"}, "back": {"lesson": "8", "kana": "つめたい", "kanji": "冷たい", "vn": "lạnh, nguội (cảm giác đồ vật)", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "さむい", "kanji": "寒い", "vn": "lạnh, rét (thời tiết)"}, "back": {"lesson": "8", "kana": "あつい", "kanji": "暑い", "vn": "nóng (thời tiết)", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "つめたい", "kanji": "冷たい", "vn": "lạnh, nguội (cảm giác đồ vật)"}, "back": {"lesson": "8", "kana": "あつい", "kanji": "熱い", "vn": "nóng (nhiệt độ đồ vật)", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "むずかしい", "kanji": "難しい", "vn": "khó"}, "back": {"lesson": "8", "kana": "やさしい", "kanji": "易しい", "vn": "dễ, đơn giản", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "やさしい", "kanji": "易しい", "vn": "dễ, đơn giản"}, "back": {"lesson": "8", "kana": "むずかしい", "kanji": "難しい", "vn": "khó", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "たかい", "kanji": "高い", "vn": "cao, đắt"}, "back": {"lesson": "8", "kana": "ひくい", "kanji": "低い", "vn": "thấp", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "やすい", "kanji": "安い", "vn": "rẻ"}, "back": {"lesson": "8", "kana": "たかい", "kanji": "高い", "vn": "cao, đắt", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "ひくい", "kanji": "低い", "vn": "thấp"}, "back": {"lesson": "8", "kana": "たかい", "kanji": "高い", "vn": "cao, đắt", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "おもしろい", "kanji": "面白い", "vn": "thú vị, hay"}, "back": {"lesson": "43", "kana": "つまらない", "kanji": "詰まらない", "vn": "chán, không thú vị", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "おいしい", "kanji": "美味しい", "vn": "ngon"}, "back": {"lesson": "43", "kana": "まずい", "kanji": "不味い", "vn": "dở, không ngon", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "いそがしい", "kanji": "忙しい", "vn": "bận, bận rộn"}, "back": {"lesson": "8", "kana": "ひまな", "kanji": "暇な", "vn": "rảnh rỗi", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "たのしい", "kanji": "楽しい", "vn": "vui, vui vẻ"}, "back": {"lesson": "43", "kana": "つまらない", "kanji": "詰まらない", "vn": "chán, không thú vị", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "しろい", "kanji": "白い", "vn": "trắng"}, "back": {"lesson": "8", "kana": "くろい", "kanji": "黒い", "vn": "đen", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "くろい", "kanji": "黒い", "vn": "đen"}, "back": {"lesson": "8", "kana": "しろい", "kanji": "白い", "vn": "trắng", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "あかい", "kanji": "赤い", "vn": "đỏ"}, "back": null}, {"front": {"lesson": "Lesson 8", "kana": "あおい", "kanji": "青い", "vn": "xanh da trời, xanh lam"}, "back": null}, {"front": {"lesson": "Lesson 12", "kana": "ちかい", "kanji": "近い", "vn": "gần"}, "back": {"lesson": "12", "kana": "とおい", "kanji": "遠い", "vn": "xa", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "とおい", "kanji": "遠い", "vn": "xa"}, "back": {"lesson": "12", "kana": "ちかい", "kanji": "近い", "vn": "gần", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "はやい", "kanji": "速い", "vn": "nhanh"}, "back": {"lesson": "12", "kana": "おそい", "kanji": "遅い", "vn": "chậm, muộn", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "はやい", "kanji": "早い", "vn": "sớm"}, "back": {"lesson": "12", "kana": "おそい", "kanji": "遅い", "vn": "chậm, muộn", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "おそい", "kanji": "遅い", "vn": "chậm, muộn"}, "back": {"lesson": "12", "kana": "はやい", "kanji": "早い", "vn": "sớm", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "おおい", "kanji": "多い", "vn": "nhiều"}, "back": {"lesson": "12", "kana": "すくない", "kanji": "少ない", "vn": "ít", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "すくない", "kanji": "少ない", "vn": "ít"}, "back": {"lesson": "12", "kana": "おおい", "kanji": "多い", "vn": "nhiều", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "あたたかい", "kanji": "暖かい/温かい", "vn": "ấm áp"}, "back": {"lesson": "12", "kana": "すずしい", "kanji": "涼しい", "vn": "mát mẻ", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "すずしい", "kanji": "涼しい", "vn": "mát mẻ"}, "back": {"lesson": "12", "kana": "あたたかい", "kanji": "暖かい/温かい", "vn": "ấm áp", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "あまい", "kanji": "甘い", "vn": "ngọt"}, "back": {"lesson": "12", "kana": "からい", "kanji": "辛い", "vn": "cay", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "からい", "kanji": "辛い", "vn": "cay"}, "back": {"lesson": "12", "kana": "あまい", "kanji": "甘い", "vn": "ngọt", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "おもい", "kanji": "重い", "vn": "nặng"}, "back": {"lesson": "12", "kana": "かるい", "kanji": "軽い", "vn": "nhẹ", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "かるい", "kanji": "軽い", "vn": "nhẹ"}, "back": {"lesson": "12", "kana": "おもい", "kanji": "重い", "vn": "nặng", "is_new": false}}, {"front": {"lesson": "Lesson 12", "kana": "(コーヒーが)いい/よい", "kanji": "", "vn": "chọn / thích (cà phê) hơn"}, "back": null}, {"front": {"lesson": "Lesson 13", "kana": "ほしい", "kanji": "欲しい", "vn": "muốn có"}, "back": null}, {"front": {"lesson": "Lesson 13", "kana": "さびしい", "kanji": "寂しい", "vn": "buồn, cô đơn"}, "back": {"lesson": "8", "kana": "にぎやかな", "kanji": "賑やかな", "vn": "náo nhiệt, nhộn nhịp", "is_new": false}}, {"front": {"lesson": "Lesson 13", "kana": "ひろい", "kanji": "広い", "vn": "rộng, rộng rãi"}, "back": {"lesson": "13", "kana": "せまい", "kanji": "狭い", "vn": "hẹp, chật hẹp", "is_new": false}}, {"front": {"lesson": "Lesson 13", "kana": "せまい", "kanji": "狭い", "vn": "hẹp, chật hẹp"}, "back": {"lesson": "13", "kana": "ひろい", "kanji": "広い", "vn": "rộng, rộng rãi", "is_new": false}}, {"front": {"lesson": "Lesson 16", "kana": "わかい", "kanji": "若い", "vn": "trẻ"}, "back": {"lesson": "Chưa học", "kana": "としおいた", "kanji": "年老いた", "vn": "già, cao tuổi", "is_new": true}}, {"front": {"lesson": "Lesson 16", "kana": "ながい", "kanji": "長い", "vn": "dài"}, "back": {"lesson": "16", "kana": "みじかい", "kanji": "短い", "vn": "ngắn", "is_new": false}}, {"front": {"lesson": "Lesson 16", "kana": "みじかい", "kanji": "短い", "vn": "ngắn"}, "back": {"lesson": "16", "kana": "ながい", "kanji": "長い", "vn": "dài", "is_new": false}}, {"front": {"lesson": "Lesson 16", "kana": "あかるい", "kanji": "明るい", "vn": "sáng, sáng sủa"}, "back": {"lesson": "16", "kana": "くらい", "kanji": "暗い", "vn": "tối, u ám", "is_new": false}}, {"front": {"lesson": "Lesson 16", "kana": "くらい", "kanji": "暗い", "vn": "tối, u ám"}, "back": {"lesson": "16", "kana": "あかるい", "kanji": "明るい", "vn": "sáng, sáng sủa", "is_new": false}}, {"front": {"lesson": "Lesson 16", "kana": "せがたかい", "kanji": "背が高い", "vn": "cao (dáng người)"}, "back": {"lesson": "Chưa học", "kana": "せがひくい", "kanji": "背が低い", "vn": "thấp (dáng người)", "is_new": true}}, {"front": {"lesson": "Lesson 17", "kana": "あぶない", "kanji": "危ない", "vn": "nguy hiểm"}, "back": {"lesson": "44", "kana": "あんぜんな", "kanji": "安全な", "vn": "an toàn", "is_new": false}}, {"front": {"lesson": "Lesson 17", "kana": "いたい", "kanji": "痛い", "vn": "đau"}, "back": null}, {"front": {"lesson": "Lesson 19", "kana": "ねむい", "kanji": "眠い", "vn": "buồn ngủ"}, "back": null}, {"front": {"lesson": "Lesson 19", "kana": "つよい", "kanji": "強い", "vn": "mạnh, khỏe"}, "back": {"lesson": "19", "kana": "よわい", "kanji": "弱い", "vn": "yếu", "is_new": false}}, {"front": {"lesson": "Lesson 19", "kana": "よわい", "kanji": "弱い", "vn": "yếu"}, "back": {"lesson": "19", "kana": "つよい", "kanji": "強い", "vn": "mạnh, khỏe", "is_new": false}}, {"front": {"lesson": "Lesson 19", "kana": "ちょうしがいい", "kanji": "調子が良い", "vn": "tình trạng tốt, khỏe mạnh"}, "back": {"lesson": "19", "kana": "ちょうしがわるい", "kanji": "調子が悪い", "vn": "tình trạng xấu, không khỏe", "is_new": false}}, {"front": {"lesson": "Lesson 19", "kana": "ちょうしがわるい", "kanji": "調子が悪い", "vn": "tình trạng xấu, không khỏe"}, "back": {"lesson": "19", "kana": "ちょうしがいい", "kanji": "調子が良い", "vn": "tình trạng tốt, khỏe mạnh", "is_new": false}}, {"front": {"lesson": "Lesson 19", "kana": "からだにいい", "kanji": "体に良い", "vn": "tốt cho sức khỏe"}, "back": {"lesson": "Chưa học", "kana": "からだにわるい", "kanji": "体に悪い", "vn": "không tốt cho sức khỏe", "is_new": true}}, {"front": {"lesson": "Lesson 21", "kana": "すごい", "kanji": "凄い", "vn": "tuyệt vời, ghê gớm"}, "back": null}, {"front": {"lesson": "Lesson 26", "kana": "つごうがいい", "kanji": "都合が良い", "vn": "thuận tiện (thời gian)"}, "back": {"lesson": "26", "kana": "つごうがわるい", "kanji": "都合が悪い", "vn": "bất tiện, bận (thời gian)", "is_new": false}}, {"front": {"lesson": "Lesson 26", "kana": "つごうがわるい", "kanji": "都合が悪い", "vn": "bất tiện, bận (thời gian)"}, "back": {"lesson": "26", "kana": "つごうがいい", "kanji": "都合が良い", "vn": "thuận tiện (thời gian)", "is_new": false}}, {"front": {"lesson": "Lesson 26", "kana": "きぶんがいい", "kanji": "気分が良い", "vn": "tâm trạng thoải mái, dễ chịu"}, "back": {"lesson": "26", "kana": "きぶんがわるい", "kanji": "気分が悪い", "vn": "khó chịu, mệt trong người", "is_new": false}}, {"front": {"lesson": "Lesson 26", "kana": "きぶんがわるい", "kanji": "気分が悪い", "vn": "khó chịu, mệt trong người"}, "back": {"lesson": "26", "kana": "きぶんがいい", "kanji": "気分が良い", "vn": "tâm trạng thoải mái, dễ chịu", "is_new": false}}, {"front": {"lesson": "Lesson 26", "kana": "こわい", "kanji": "怖い", "vn": "sợ, đáng sợ"}, "back": null}, {"front": {"lesson": "Lesson 27", "kana": "すばらしい", "kanji": "素晴らしい", "vn": "tuyệt vời"}, "back": {"lesson": "47", "kana": "ひどい", "kanji": "酷い", "vn": "tồi tệ, dữ dội", "is_new": false}}, {"front": {"lesson": "Lesson 28", "kana": "やさしい", "kanji": "優しい", "vn": "hiền lành, dịu dàng, tốt bụng"}, "back": {"lesson": "48", "kana": "きびしい", "kanji": "厳しい", "vn": "nghiêm khắc, nghiêm ngặt", "is_new": false}}, {"front": {"lesson": "Lesson 28", "kana": "えらい", "kanji": "偉い", "vn": "vĩ đại, giỏi giang"}, "back": null}, {"front": {"lesson": "Lesson 28", "kana": "ちょうどいい", "kanji": "丁度良い", "vn": "vừa đúng, vừa vặn"}, "back": null}, {"front": {"lesson": "Lesson 30", "kana": "まるい", "kanji": "丸い", "vn": "tròn"}, "back": {"lesson": "Chưa học", "kana": "しかくい", "kanji": "四角い", "vn": "vuông", "is_new": true}}, {"front": {"lesson": "Lesson 30", "kana": "うれしい", "kanji": "嬉しい", "vn": "vui mừng, sung sướng"}, "back": {"lesson": "39", "kana": "かなしい", "kanji": "悲しい", "vn": "buồn rầu, đau buồn", "is_new": false}}, {"front": {"lesson": "Lesson 31", "kana": "うつくしい", "kanji": "美しい", "vn": "đẹp, tươi đẹp"}, "back": {"lesson": "Chưa học", "kana": "みにくい", "kanji": "醜い", "vn": "xấu xí", "is_new": true}}, {"front": {"lesson": "Lesson 32", "kana": "おかしい", "kanji": "可笑しい", "vn": "lạ lùng, buồn cười"}, "back": null}, {"front": {"lesson": "Lesson 32", "kana": "うるさい", "kanji": "煩い/五月蝿い", "vn": "ồn ào, phiền phức"}, "back": {"lesson": "8", "kana": "しずかな", "kanji": "静かな", "vn": "yên tĩnh", "is_new": false}}, {"front": {"lesson": "Lesson 34", "kana": "ほそい", "kanji": "細い", "vn": "thon thả, mảnh mai, gầy"}, "back": {"lesson": "34", "kana": "ふとい", "kanji": "太い", "vn": "to, mập, béo", "is_new": false}}, {"front": {"lesson": "Lesson 34", "kana": "ふとい", "kanji": "太い", "vn": "to, mập, béo"}, "back": {"lesson": "34", "kana": "ほそい", "kanji": "細い", "vn": "thon thả, mảnh mai, gầy", "is_new": false}}, {"front": {"lesson": "Lesson 34", "kana": "にがい", "kanji": "苦い", "vn": "đắng"}, "back": {"lesson": "12", "kana": "あまい", "kanji": "甘い", "vn": "ngọt", "is_new": false}}, {"front": {"lesson": "Lesson 35", "kana": "ただしい", "kanji": "正しい", "vn": "đúng, chính xác"}, "back": {"lesson": "Chưa học", "kana": "まちがった", "kanji": "間違った", "vn": "sai, nhầm", "is_new": true}}, {"front": {"lesson": "Lesson 35", "kana": "めずらしい", "kanji": "珍しい", "vn": "hiếm, hiếm có"}, "back": {"lesson": "Chưa học", "kana": "ありふれた", "kanji": "ありふれた", "vn": "bình thường, phổ biến", "is_new": true}}, {"front": {"lesson": "Lesson 35", "kana": "くわしい", "kanji": "詳しい", "vn": "chi tiết, tường tận"}, "back": null}, {"front": {"lesson": "Lesson 36", "kana": "かたい", "kanji": "硬い", "vn": "cứng"}, "back": {"lesson": "36", "kana": "やわらかい", "kanji": "軟らかい", "vn": "mềm", "is_new": false}}, {"front": {"lesson": "Lesson 36", "kana": "やわらかい", "kanji": "軟らかい", "vn": "mềm"}, "back": {"lesson": "36", "kana": "かたい", "kanji": "硬い", "vn": "cứng", "is_new": false}}, {"front": {"lesson": "Lesson 38", "kana": "きもちがいい", "kanji": "気持ちが良い", "vn": "dễ chịu, sảng khoái"}, "back": {"lesson": "38", "kana": "きもちがわるい", "kanji": "気持ちが悪い", "vn": "khó chịu, ghê tởm", "is_new": false}}, {"front": {"lesson": "Lesson 38", "kana": "きもちがわるい", "kanji": "気持ちが悪い", "vn": "khó chịu, ghê tởm"}, "back": {"lesson": "38", "kana": "きもちがいい", "kanji": "気持ちが良い", "vn": "dễ chịu, sảng khoái", "is_new": false}}, {"front": {"lesson": "Lesson 38", "kana": "おとなしい", "kanji": "大人しい", "vn": "ngoan ngoãn, trầm tính, hiền lành"}, "back": {"lesson": "32", "kana": "うるさい", "kanji": "煩い/五月蝿い", "vn": "ồn ào, phiền phức", "is_new": false}}, {"front": {"lesson": "Lesson 39", "kana": "きたない", "kanji": "汚い", "vn": "bẩn, dơ"}, "back": {"lesson": "8", "kana": "きれいな", "kanji": "綺麗な", "vn": "đẹp, sạch sẽ", "is_new": false}}, {"front": {"lesson": "Lesson 39", "kana": "うれしい", "kanji": "嬉しい", "vn": "vui mừng, sung sướng"}, "back": {"lesson": "39", "kana": "かなしい", "kanji": "悲しい", "vn": "buồn rầu, đau buồn", "is_new": false}}, {"front": {"lesson": "Lesson 39", "kana": "かなしい", "kanji": "悲しい", "vn": "buồn rầu, đau buồn"}, "back": {"lesson": "39", "kana": "うれしい", "kanji": "嬉しい", "vn": "vui mừng, sung sướng", "is_new": false}}, {"front": {"lesson": "Lesson 39", "kana": "はずかしい", "kanji": "恥ずかしい", "vn": "xấu hổ, ngượng ngùng"}, "back": null}, {"front": {"lesson": "Lesson 41", "kana": "かわいい", "kanji": "可愛い", "vn": "đáng yêu, dễ thương"}, "back": {"lesson": "Chưa học", "kana": "みにくい", "kanji": "醜い", "vn": "xấu xí", "is_new": true}}, {"front": {"lesson": "Lesson 42", "kana": "あつい", "kanji": "厚い", "vn": "dày"}, "back": {"lesson": "42", "kana": "うすい", "kanji": "(厚さが)薄い", "vn": "mỏng (độ dày)", "is_new": false}}, {"front": {"lesson": "Lesson 42", "kana": "うすい", "kanji": "(厚さが)薄い", "vn": "mỏng (độ dày)"}, "back": {"lesson": "42", "kana": "あつい", "kanji": "厚い", "vn": "dày", "is_new": false}}, {"front": {"lesson": "Lesson 43", "kana": "うまい", "kanji": "美味い/巧い/上手い", "vn": "ngon / giỏi, khéo"}, "back": {"lesson": "43", "kana": "まずい", "kanji": "不味い", "vn": "dở, không ngon", "is_new": false}}, {"front": {"lesson": "Lesson 43", "kana": "まずい", "kanji": "不味い", "vn": "dở, không ngon"}, "back": {"lesson": "8", "kana": "おいしい", "kanji": "美味しい", "vn": "ngon", "is_new": false}}, {"front": {"lesson": "Lesson 43", "kana": "つまらない", "kanji": "詰まらない", "vn": "chán, không thú vị"}, "back": {"lesson": "8", "kana": "おもしろい", "kanji": "面白い", "vn": "thú vị, hay", "is_new": false}}, {"front": {"lesson": "Lesson 44", "kana": "こまかい", "kanji": "細かい", "vn": "nhỏ, chi tiết / tiền lẻ"}, "back": {"lesson": "Chưa học", "kana": "おおざっぱな", "kanji": "大雑把な", "vn": "đại khái, sơ sài", "is_new": true}}, {"front": {"lesson": "Lesson 44", "kana": "こい", "kanji": "濃い", "vn": "đậm, đặc"}, "back": {"lesson": "44", "kana": "うすい", "kanji": "(濃度が)薄い", "vn": "nhạt, loãng (nồng độ)", "is_new": false}}, {"front": {"lesson": "Lesson 44", "kana": "うすい", "kanji": "(濃度が)薄い", "vn": "nhạt, loãng (nồng độ)"}, "back": {"lesson": "44", "kana": "こい", "kanji": "濃い", "vn": "đậm, đặc", "is_new": false}}, {"front": {"lesson": "Lesson 44", "kana": "えんきがわるい", "kanji": "縁起が悪い", "vn": "xui xẻo, điềm xấu"}, "back": {"lesson": "Chưa học", "kana": "えんきがいい", "kanji": "縁起が良い", "vn": "may mắn, điềm lành", "is_new": true}}, {"front": {"lesson": "Lesson 47", "kana": "ひどい", "kanji": "酷い", "vn": "tồi tệ, dữ dội"}, "back": {"lesson": "27", "kana": "すばらしい", "kanji": "素晴らしい", "vn": "tuyệt vời", "is_new": false}}, {"front": {"lesson": "Lesson 47", "kana": "こわい", "kanji": "怖い", "vn": "sợ, đáng sợ"}, "back": null}, {"front": {"lesson": "Lesson 48", "kana": "きびしい", "kanji": "厳しい", "vn": "nghiêm khắc, nghiêm ngặt"}, "back": {"lesson": "28", "kana": "やさしい", "kanji": "優しい", "vn": "hiền lành, dịu dàng, tốt bụng", "is_new": false}}, {"front": {"lesson": "Lesson 48", "kana": "うつくしい", "kanji": "美しい", "vn": "đẹp, tuyệt mỹ"}, "back": {"lesson": "Chưa học", "kana": "みにくい", "kanji": "醜い", "vn": "xấu xí", "is_new": true}}, {"front": {"lesson": "Lesson 8", "kana": "ハンサムな", "kanji": "", "vn": "đẹp trai"}, "back": null}, {"front": {"lesson": "Lesson 8", "kana": "きれいな", "kanji": "綺麗な", "vn": "đẹp, sạch sẽ"}, "back": {"lesson": "39", "kana": "きたない", "kanji": "汚い", "vn": "bẩn, dơ", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "しずかな", "kanji": "静かな", "vn": "yên tĩnh"}, "back": {"lesson": "32", "kana": "うるさい", "kanji": "煩い/五月蝿い", "vn": "ồn ào, phiền phức", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "にぎやかな", "kanji": "賑やかな", "vn": "náo nhiệt, nhộn nhịp"}, "back": {"lesson": "8", "kana": "しずかな", "kanji": "静かな", "vn": "yên tĩnh", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "ゆうめいな", "kanji": "有名な", "vn": "nổi tiếng"}, "back": {"lesson": "Chưa học", "kana": "むめいな", "kanji": "無名な", "vn": "vô danh", "is_new": true}}, {"front": {"lesson": "Lesson 8", "kana": "しんせつな", "kanji": "親切な", "vn": "tốt bụng, thân thiện"}, "back": {"lesson": "Chưa học", "kana": "ふしんせつな", "kanji": "不親切な", "vn": "không thân thiện", "is_new": true}}, {"front": {"lesson": "Lesson 8", "kana": "げんきな", "kanji": "元気な", "vn": "khỏe mạnh"}, "back": {"lesson": "Chưa học", "kana": "びょうきの", "kanji": "病気の", "vn": "ốm đau, bệnh tật", "is_new": true}}, {"front": {"lesson": "Lesson 8", "kana": "ひまな", "kanji": "暇な", "vn": "rảnh rỗi"}, "back": {"lesson": "8", "kana": "いそがしい", "kanji": "忙しい", "vn": "bận, bận rộn", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "べんりな", "kanji": "便利な", "vn": "tiện lợi"}, "back": {"lesson": "21", "kana": "ふべんな", "kanji": "不便な", "vn": "bất tiện", "is_new": false}}, {"front": {"lesson": "Lesson 8", "kana": "すてきな", "kanji": "素適な", "vn": "tuyệt vời, đẹp"}, "back": null}, {"front": {"lesson": "Lesson 9", "kana": "すきな", "kanji": "好きな", "vn": "thích"}, "back": {"lesson": "9", "kana": "きらいな", "kanji": "嫌いな", "vn": "ghét", "is_new": false}}, {"front": {"lesson": "Lesson 9", "kana": "きらいな", "kanji": "嫌いな", "vn": "ghét"}, "back": {"lesson": "9", "kana": "すきな", "kanji": "好きな", "vn": "thích", "is_new": false}}, {"front": {"lesson": "Lesson 9", "kana": "じょうずな", "kanji": "上手な", "vn": "giỏi, khéo"}, "back": {"lesson": "9", "kana": "へたな", "kanji": "下手な", "vn": "kém, dở", "is_new": false}}, {"front": {"lesson": "Lesson 9", "kana": "へたな", "kanji": "下手な", "vn": "kém, dở"}, "back": {"lesson": "9", "kana": "じょうずな", "kanji": "上手な", "vn": "giỏi, khéo", "is_new": false}}, {"front": {"lesson": "Lesson 10", "kana": "いろいろな", "kanji": "色々な", "vn": "nhiều, đa dạng"}, "back": {"lesson": "Chưa học", "kana": "おなじ", "kanji": "同じ", "vn": "giống nhau", "is_new": true}}, {"front": {"lesson": "Lesson 12", "kana": "かんたんな", "kanji": "簡単な", "vn": "đơn giản, dễ"}, "back": {"lesson": "8", "kana": "むずかしい", "kanji": "難しい", "vn": "khó", "is_new": false}}, {"front": {"lesson": "Lesson 13", "kana": "たいへんな", "kanji": "大変な", "vn": "vất vả, khó khăn"}, "back": {"lesson": "35", "kana": "らくな", "kanji": "楽な", "vn": "nhàn hạ, thoải mái", "is_new": false}}, {"front": {"lesson": "Lesson 17", "kana": "たいせつな", "kanji": "大切な", "vn": "quan trọng, quý giá"}, "back": {"lesson": "Chưa học", "kana": "どうでもいい", "kanji": "どうでもいい", "vn": "sao cũng được, không quan trọng", "is_new": true}}, {"front": {"lesson": "Lesson 17", "kana": "だいじょうぶな", "kanji": "大丈夫な", "vn": "không sao, ổn"}, "back": null}, {"front": {"lesson": "Lesson 19", "kana": "むりな", "kanji": "無理な", "vn": "vô lý, quá sức"}, "back": {"lesson": "Chưa học", "kana": "かのうな", "kanji": "可能な", "vn": "có thể, khả thi", "is_new": true}}, {"front": {"lesson": "Lesson 21", "kana": "ふべんな", "kanji": "不便な", "vn": "bất tiện"}, "back": {"lesson": "8", "kana": "べんりな", "kanji": "便利な", "vn": "tiện lợi", "is_new": false}}, {"front": {"lesson": "Lesson 21", "kana": "むだな", "kanji": "無駄な", "vn": "lãng phí, vô ích"}, "back": {"lesson": "Chưa học", "kana": "ゆうえきな", "kanji": "有益な", "vn": "có ích, hữu ích", "is_new": true}}, {"front": {"lesson": "Lesson 27", "kana": "だいすきな", "kanji": "大好きな", "vn": "rất thích"}, "back": {"lesson": "Chưa học", "kana": "だいきらいな", "kanji": "大嫌いな", "vn": "rất ghét", "is_new": true}}, {"front": {"lesson": "Lesson 27", "kana": "ふしぎな", "kanji": "不思議な", "vn": "kỳ lạ, huyền bí"}, "back": {"lesson": "Chưa học", "kana": "とうぜんな", "kanji": "当然な", "vn": "đương nhiên, tất nhiên", "is_new": true}}, {"front": {"lesson": "Lesson 27", "kana": "じゆうな", "kanji": "自由な", "vn": "tự do"}, "back": {"lesson": "Chưa học", "kana": "ふじゆうな", "kanji": "不自由な", "vn": "mất tự do, tàn tật", "is_new": true}}, {"front": {"lesson": "Lesson 28", "kana": "まじめな", "kanji": "真面目な", "vn": "nghiêm túc, chăm chỉ"}, "back": {"lesson": "Chưa học", "kana": "ふまじめな", "kanji": "不真面目な", "vn": "không nghiêm túc", "is_new": true}}, {"front": {"lesson": "Lesson 28", "kana": "ねっしんな", "kanji": "熱心な", "vn": "nhiệt tình, say mê"}, "back": {"lesson": "Chưa học", "kana": "ふねっしんな", "kanji": "不熱心な", "vn": "không nhiệt tình", "is_new": true}}, {"front": {"lesson": "Lesson 32", "kana": "しんぱいな", "kanji": "心配な", "vn": "lo lắng"}, "back": {"lesson": "Chưa học", "kana": "あんしんな", "kanji": "安心な", "vn": "an tâm", "is_new": true}}, {"front": {"lesson": "Lesson 32", "kana": "じゅうぶんな", "kanji": "十分な", "vn": "đủ, đầy đủ"}, "back": {"lesson": "Chưa học", "kana": "ふじゅうぶんな", "kanji": "不十分な", "vn": "không đủ", "is_new": true}}, {"front": {"lesson": "Lesson 33", "kana": "だめな", "kanji": "駄目な", "vn": "không được, hỏng"}, "back": null}, {"front": {"lesson": "Lesson 35", "kana": "らくな", "kanji": "楽な", "vn": "nhàn hạ, thoải mái"}, "back": {"lesson": "13", "kana": "たいへんな", "kanji": "大変な", "vn": "vất vả, khó khăn", "is_new": false}}, {"front": {"lesson": "Lesson 36", "kana": "とくべつな", "kanji": "特別な", "vn": "đặc biệt"}, "back": {"lesson": "Chưa học", "kana": "ふつうの", "kanji": "普通の", "vn": "bình thường", "is_new": true}}, {"front": {"lesson": "Lesson 37", "kana": "ごうかな", "kanji": "豪華な", "vn": "sang trọng, xa hoa"}, "back": {"lesson": "Chưa học", "kana": "しっそな", "kanji": "質素な", "vn": "giản dị, thanh đạm", "is_new": true}}, {"front": {"lesson": "Lesson 39", "kana": "ふくざつな", "kanji": "複雑な", "vn": "phức tạp"}, "back": {"lesson": "12", "kana": "かんたんな", "kanji": "簡単な", "vn": "đơn giản, dễ", "is_new": false}}, {"front": {"lesson": "Lesson 39", "kana": "じゃまな", "kanji": "邪魔な", "vn": "vướng víu, cản trở"}, "back": {"lesson": "Chưa học", "kana": "やくにたつ", "kanji": "役に立つ", "vn": "có ích", "is_new": true}}, {"front": {"lesson": "Lesson 40", "kana": "ひつような", "kanji": "必要な", "vn": "cần thiết"}, "back": {"lesson": "Chưa học", "kana": "ふような", "kanji": "不要な", "vn": "không cần thiết", "is_new": true}}, {"front": {"lesson": "Lesson 40", "kana": "きけんな", "kanji": "危険な", "vn": "nguy hiểm"}, "back": {"lesson": "44", "kana": "あんぜんな", "kanji": "安全な", "vn": "an toàn", "is_new": false}}, {"front": {"lesson": "Lesson 41", "kana": "まっしろな", "kanji": "真っ白な", "vn": "trắng tinh, trắng xóa"}, "back": {"lesson": "Chưa học", "kana": "まっくろな", "kanji": "真っ黒な", "vn": "đen thui", "is_new": true}}, {"front": {"lesson": "Lesson 43", "kana": "じょうぶな", "kanji": "丈夫な", "vn": "bền, chắc chắn, khỏe mạnh"}, "back": {"lesson": "19", "kana": "よわい", "kanji": "弱い", "vn": "yếu", "is_new": false}}, {"front": {"lesson": "Lesson 43", "kana": "へんな", "kanji": "変な", "vn": "lạ, kỳ lạ"}, "back": {"lesson": "Chưa học", "kana": "ふつうの", "kanji": "普通の", "vn": "bình thường", "is_new": true}}, {"front": {"lesson": "Lesson 43", "kana": "しあわせな", "kanji": "幸せな", "vn": "hạnh phúc"}, "back": {"lesson": "Chưa học", "kana": "ふしあわせな", "kanji": "不幸せな", "vn": "bất hạnh", "is_new": true}}, {"front": {"lesson": "Lesson 43", "kana": "てきとうな", "kanji": "適当な", "vn": "thích hợp, vừa phải"}, "back": {"lesson": "Chưa học", "kana": "ふてきとうな", "kanji": "不適当な", "vn": "không thích hợp", "is_new": true}}, {"front": {"lesson": "Lesson 44", "kana": "あんぜんな", "kanji": "安全な", "vn": "an toàn"}, "back": {"lesson": "40", "kana": "きけんな", "kanji": "危険な", "vn": "nguy hiểm", "is_new": false}}, {"front": {"lesson": "Lesson 44", "kana": "ていねいな", "kanji": "丁寧な", "vn": "lịch sự, cẩn thận"}, "back": {"lesson": "Chưa học", "kana": "らんぼうな", "kanji": "乱暴な", "vn": "thô bạo, thô lỗ", "is_new": true}}, {"front": {"lesson": "Lesson 48", "kana": "いやな", "kanji": "嫌な", "vn": "khó chịu, ghét, không ưa"}, "back": null}];
@@ -535,11 +633,50 @@
 
     let currentIndex = 0;
 
+    function shuffleCards() {
+        for (let i = flashcards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+        }
+        currentIndex = 0;
+        renderCard();
+    }
+
     // Quiz State
     let quizCards = [];
     let currentQuizIndex = 0;
     let quizChoices = [];
     let hasAnswered = false;
+
+    function exportCSV() {
+        const thead = document.getElementById('admin-thead');
+        const tbody = document.getElementById('admin-tbody');
+        const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent);
+        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr =>
+            Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim())
+        );
+        const escapeCsv = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+        const lines = [headers, ...rows].map(row => row.map(escapeCsv).join(','));
+        const csv = '\uFEFF' + lines.join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (document.title || 'data').replace(/[^\w\-]+/g, '_') + '_' + currentSource + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function printTable() {
+        const title = document.getElementById('admin-title').textContent;
+        const theadHtml = document.getElementById('admin-thead').innerHTML;
+        const tbodyHtml = document.getElementById('admin-tbody').innerHTML;
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = `<h2>${title}</h2><table><thead>${theadHtml}</thead><tbody>${tbodyHtml}</tbody></table>`;
+        window.print();
+    }
 
     function openAdmin(event) {
         if (event) event.stopPropagation();

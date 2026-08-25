@@ -5,9 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Từ Trái Nghĩa - Động Từ Chung</title>
     <style>
+        :root {
+            --sand-50: #FBF8F1;
+            --sand-100: #F6F0E4;
+            --sand-200: #EDE2CB;
+            --sand-300: #E0CFA8;
+            --sand-400: #CBAE78;
+            --sand-500: #B08D57;
+            --sand-600: #8C6D3F;
+            --sand-700: #6B5230;
+            --sand-800: #4C3A22;
+            --lemon-100: #FDFAE2;
+            --lemon-200: #FAF3B8;
+            --lemon-300: #F4E888;
+            --leaf-100: #E7F3DE;
+            --leaf-200: #D0E8BE;
+            --leaf-300: #B4D89A;
+            --leaf-400: #95C476;
+            --kanjibrown: #6B4226;
+            --kanjibrown-dark: #4A2C18;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: var(--sand-100);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,9 +40,9 @@
             max-width: 500px;
             padding: 20px;
             text-align: center;
-            background: #fff;
+            background: var(--sand-50);
             border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px -8px rgba(107, 66, 38, 0.35);
         }
         .header-container {
             width: 100%;
@@ -41,9 +61,9 @@
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: white;
+            background-color: var(--sand-50);
             min-width: 280px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px 0px rgba(74, 44, 24, 0.25);
             z-index: 10;
             border-radius: 8px;
             top: 40px;
@@ -51,25 +71,25 @@
             text-align: left;
         }
         .dropdown-content a {
-            color: black;
+            color: var(--kanjibrown-dark);
             padding: 12px 16px;
             text-decoration: none;
             display: block;
             font-weight: bold;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--sand-200);
         }
         .dropdown-content a:last-child { border-bottom: none; }
-        .dropdown-content a.current { color: #9C27B0; }
-        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .dropdown-content a.current { color: var(--sand-600); }
+        .dropdown-content a:hover { background-color: var(--sand-100); }
 
-        h2 { margin: 0; font-size: 19px; }
+        h2 { margin: 0; font-size: 19px; color: var(--kanjibrown-dark); }
 
         /* --- Source toggle --- */
         .source-toggle-wrap { margin: 10px 0 6px; }
         .source-toggle-btn {
-            background-color: #fff3e0;
-            border: 2px solid #FF9800;
-            color: #E65100;
+            background-color: var(--lemon-100);
+            border: 2px solid var(--sand-400);
+            color: var(--kanjibrown-dark);
             padding: 8px 16px;
             font-size: 14px;
             font-weight: bold;
@@ -77,7 +97,7 @@
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .source-toggle-btn:hover { background-color: #ffe0b2; }
+        .source-toggle-btn:hover { background-color: var(--lemon-200); }
         .source-toggle-btn:active { transform: scale(0.95); }
 
         /* Flashcard Mode Styles */
@@ -93,9 +113,10 @@
             position: relative;
             transition: transform 0.6s;
             transform-style: preserve-3d;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(107, 66, 38, 0.2);
             border-radius: 15px;
-            background-color: white;
+            background-color: var(--lemon-200);
+            border: 2px solid var(--lemon-300);
         }
         .flashcard.is-flipped { transform: rotateY(180deg); }
         .card-face {
@@ -113,25 +134,26 @@
         }
         .card-back {
             transform: rotateY(180deg);
-            background-color: #fdfbf7;
-            border: 2px solid #e0dcd3;
+            background-color: var(--lemon-100);
+            border: 2px solid var(--lemon-300);
         }
         .lesson-tag {
             position: absolute;
             top: 15px;
             left: 15px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: var(--leaf-300);
+            color: var(--kanjibrown-dark);
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 14px;
             font-weight: bold;
         }
+        .lesson-tag.new-word { background-color: var(--sand-500); color: var(--sand-50); }
         .speaker-btn {
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: #f0f0f0;
+            background-color: var(--sand-200);
             border: none;
             font-size: 24px;
             cursor: pointer;
@@ -142,13 +164,13 @@
             align-items: center;
             width: 45px;
             height: 45px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(107, 66, 38, 0.15);
         }
-        .speaker-btn:hover { background-color: #e0e0e0; }
-        .word-kana { font-size: 42px; font-weight: bold; color: #333; margin-bottom: 10px; }
-        .word-kanji { font-size: 22px; color: #666; margin-bottom: 15px; }
-        .word-meaning { font-size: 20px; color: #1976D2; font-weight: bold; }
-        .no-antonym { font-size: 32px; color: #9e9e9e; font-weight: bold; }
+        .speaker-btn:hover { background-color: var(--sand-300); }
+        .word-kana { font-size: 42px; font-weight: bold; color: var(--kanjibrown); margin-bottom: 10px; }
+        .word-kanji { font-size: 22px; color: var(--sand-700); margin-bottom: 15px; }
+        .word-meaning { font-size: 20px; color: var(--kanjibrown-dark); font-weight: bold; }
+        .no-antonym { font-size: 32px; color: var(--sand-400); font-weight: bold; }
         .controls {
             display: flex;
             justify-content: space-between;
@@ -156,20 +178,20 @@
             margin-top: 20px;
         }
         .nav-btn {
-            background-color: #2196F3;
-            color: white;
+            background-color: var(--leaf-200);
+            color: var(--kanjibrown);
             border: none;
             padding: 15px 30px;
             font-size: 20px;
             border-radius: 8px;
             cursor: pointer;
         }
-        .nav-btn:hover { background-color: #1565C0; }
-        .nav-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none !important; }
-        .progress { font-size: 18px; color: #555; font-weight: bold; }
+        .nav-btn:hover { background-color: var(--leaf-300); }
+        .nav-btn:disabled { background-color: var(--sand-200); color: var(--sand-400); cursor: not-allowed; transform: none !important; }
+        .progress { font-size: 18px; color: var(--sand-700); font-weight: bold; }
         .mode-switch-btn {
-            background-color: #9C27B0;
-            color: white;
+            background-color: var(--sand-600);
+            color: var(--sand-50);
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -177,12 +199,24 @@
             cursor: pointer;
             margin-top: 4px;
         }
-        .mode-switch-btn:hover { background-color: #7B1FA2; }
+        .mode-switch-btn:hover { background-color: var(--sand-700); }
+        .shuffle-btn {
+            background-color: var(--sand-600);
+            color: var(--sand-50);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .shuffle-btn:hover { background-color: var(--sand-700); }
+        .mode-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 
-        .nav-btn, .mode-switch-btn, .quit-btn, .choice-btn, .speaker-btn, .source-toggle-btn, .settings-btn {
+        .nav-btn, .mode-switch-btn, .shuffle-btn, .quit-btn, .choice-btn, .speaker-btn, .source-toggle-btn, .icon-circle-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .nav-btn:active, .mode-switch-btn:active, .quit-btn:active, .choice-btn:active, .speaker-btn:active, .source-toggle-btn:active {
+        .nav-btn:active, .mode-switch-btn:active, .shuffle-btn:active, .quit-btn:active, .choice-btn:active, .speaker-btn:active, .source-toggle-btn:active, .icon-circle-btn:active {
             transform: scale(0.92);
         }
 
@@ -191,15 +225,15 @@
         .small-card {
             width: 100%;
             height: 180px;
-            background-color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: var(--lemon-200);
+            box-shadow: 0 5px 15px rgba(107, 66, 38, 0.2);
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 16px 0;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--lemon-300);
             position: relative;
         }
         .small-card .word-kana { font-size: 34px; margin-bottom: 5px; }
@@ -213,7 +247,7 @@
         }
         .quiz-controls .nav-btn { padding: 10px 20px; font-size: 18px; }
         .quit-btn {
-            background-color: #f44336;
+            background-color: #EF4444;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -221,41 +255,46 @@
             border-radius: 8px;
             cursor: pointer;
         }
-        .quit-btn:hover { background-color: #c62828; }
+        .quit-btn:hover { background-color: #DC2626; }
         .choices-container { display: flex; flex-direction: column; gap: 10px; }
         .choice-btn {
-            background-color: #fff;
-            border: 2px solid #2196F3;
-            color: #333;
+            background-color: var(--sand-50);
+            border: 2px solid var(--sand-300);
+            color: var(--sand-700);
             padding: 15px;
             font-size: 18px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
         }
-        .choice-btn:hover { background-color: #e3f2fd; }
-        .choice-btn.correct { background-color: #e8f5e9; color: #333; border-color: #81c784; }
-        .choice-btn.wrong { background-color: #ffebee; color: #333; border-color: #e57373; }
+        .choice-btn:hover { background-color: var(--sand-100); }
+        .choice-btn.correct { background-color: var(--leaf-200); color: var(--kanjibrown-dark); border-color: var(--leaf-400); }
+        .choice-btn.wrong { background-color: #FEE2E2; color: #B91C1C; border-color: #FCA5A5; }
         .choice-btn:disabled { cursor: not-allowed; transform: none !important; }
         #quiz-feedback { margin-top: 15px; font-size: 18px; font-weight: bold; min-height: 27px; }
 
         /* --- Admin / Settings Panel --- */
-        .settings-btn {
-            position: absolute;
-            right: 0;
-            background: none;
+        .header-icons { position: absolute; right: 0; display: flex; gap: 6px; }
+        .icon-circle-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--sand-200);
+            color: var(--sand-700);
             border: none;
-            font-size: 26px;
+            font-size: 18px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .settings-btn:hover { transform: rotate(30deg); }
-        .settings-btn:active { transform: scale(0.9) rotate(30deg); }
+        .icon-circle-btn:hover { background-color: var(--sand-300); }
 
         .admin-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(74, 44, 24, 0.45);
             z-index: 100;
             justify-content: center;
             align-items: center;
@@ -264,7 +303,7 @@
         }
         .admin-overlay.show { display: flex; }
         .admin-panel {
-            background: white;
+            background: var(--sand-50);
             border-radius: 15px;
             width: 100%;
             max-width: 900px;
@@ -272,7 +311,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(74, 44, 24, 0.35);
             text-align: left;
         }
         .admin-header {
@@ -280,27 +319,51 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--sand-300);
         }
-        .admin-header h3 { margin: 0; font-size: 18px; }
-        .admin-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
-        .admin-close-btn:hover { color: #333; }
+        .admin-header h3 { margin: 0; font-size: 18px; color: var(--kanjibrown-dark); }
+        .admin-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--sand-600); }
+        .admin-close-btn:hover { color: var(--kanjibrown-dark); }
         .admin-close-btn:active { transform: scale(0.9); }
         .admin-body { padding: 16px 20px; overflow-y: auto; }
         .admin-search {
             width: 100%;
             padding: 10px 12px;
             font-size: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--sand-300);
             border-radius: 8px;
             box-sizing: border-box;
             margin-bottom: 12px;
         }
-        .admin-count { font-size: 13px; color: #888; margin-bottom: 8px; }
+        .admin-count { font-size: 13px; color: var(--sand-600); margin-bottom: 8px; }
+        .admin-actions { display: flex; gap: 8px; margin-bottom: 12px; }
+        .admin-action-btn {
+            background-color: var(--leaf-200);
+            color: var(--kanjibrown-dark);
+            border: none;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .admin-action-btn:hover { background-color: var(--leaf-300); }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .admin-table th, .admin-table td { padding: 8px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
-        .admin-table th { background: #f9f9f9; position: sticky; top: 0; }
-        .admin-table tr:hover { background: #f5faff; }
+        .admin-table th, .admin-table td { padding: 8px 10px; border-bottom: 1px solid var(--sand-200); vertical-align: top; }
+        .admin-table th { background: var(--sand-100); color: var(--kanjibrown-dark); position: sticky; top: 0; }
+        .admin-table tr:hover { background: var(--lemon-100); }
+
+        /* --- Print --- */
+        #print-area { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { display: block; position: absolute; top: 0; left: 0; width: 100%; }
+            #print-area h2 { color: #000; }
+            #print-area table { width: 100%; border-collapse: collapse; }
+            #print-area th, #print-area td { border: 1px solid #333; padding: 6px 8px; font-size: 12px; text-align: left; }
+            #print-area th { background: #eee; }
+        }
     </style>
 </head>
 <body>
@@ -316,7 +379,10 @@
             </div>
         </div>
         <h2 id="page-title">Từ Trái Nghĩa (Động Từ Chung)</h2>
-        <button class="settings-btn" onclick="openAdmin(event)" title="Quản lý dữ liệu">⚙️</button>
+        <div class="header-icons">
+            <button class="icon-circle-btn" onclick="shuffleCards()" title="Xáo trộn thẻ (Shuffle)">🔀</button>
+            <button class="icon-circle-btn" onclick="openAdmin(event)" title="Quản lý dữ liệu">⚙️</button>
+        </div>
     </div>
 
     <div class="source-toggle-wrap">
@@ -385,6 +451,10 @@
         <div class="admin-body">
             <input type="text" class="admin-search" id="admin-search" placeholder="Tìm kiếm..." oninput="renderAdminTable()">
             <div class="admin-count" id="admin-count"></div>
+            <div class="admin-actions">
+                <button class="admin-action-btn" onclick="exportCSV()">📥 Xuất CSV</button>
+                <button class="admin-action-btn" onclick="printTable()">🖨️ In</button>
+            </div>
             <div style="overflow-x:auto;">
                 <table class="admin-table" id="admin-table">
                     <thead id="admin-thead"></thead>
@@ -394,6 +464,8 @@
         </div>
     </div>
 </div>
+
+<div id="print-area"></div>
 
 <script>
     // ===== Data sources =====
@@ -432,11 +504,50 @@
     let flashcards = SOURCES[currentSource].data;
     let currentIndex = 0;
 
+    function shuffleCards() {
+        for (let i = flashcards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+        }
+        currentIndex = 0;
+        renderCard();
+    }
+
     // Quiz State
     let quizCards = [];
     let currentQuizIndex = 0;
     let quizChoices = [];
     let hasAnswered = false;
+
+    function exportCSV() {
+        const thead = document.getElementById('admin-thead');
+        const tbody = document.getElementById('admin-tbody');
+        const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent);
+        const rows = Array.from(tbody.querySelectorAll('tr')).map(tr =>
+            Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim())
+        );
+        const escapeCsv = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+        const lines = [headers, ...rows].map(row => row.map(escapeCsv).join(','));
+        const csv = '\uFEFF' + lines.join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (document.title || 'data').replace(/[^\w\-]+/g, '_') + '_' + currentSource + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function printTable() {
+        const title = document.getElementById('admin-title').textContent;
+        const theadHtml = document.getElementById('admin-thead').innerHTML;
+        const tbodyHtml = document.getElementById('admin-tbody').innerHTML;
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = `<h2>${title}</h2><table><thead>${theadHtml}</thead><tbody>${tbodyHtml}</tbody></table>`;
+        window.print();
+    }
 
     function applySourceUI() {
         const src = SOURCES[currentSource];
